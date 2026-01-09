@@ -77,7 +77,7 @@ export class InventarioService {
       foto_portada: item.foto_portada ?? item.fotoPortada ?? '',
       categoria: item.categoria ?? '',
       marca: item.marca ?? '',
-      corte: item.corte ?? '',
+      estilo: item.estilo ?? item.corte ?? '',
       total_stock_global: item.total_stock_global ?? item.totalStockGlobal ?? 0,
     };
   }

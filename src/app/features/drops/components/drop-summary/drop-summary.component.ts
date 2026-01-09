@@ -131,9 +131,8 @@ import { take } from 'rxjs/operators';
             [ngModel]="sessionService.sucursalId()"
             (ngModelChange)="onBranchChange($event)"
           >
-            <option [value]="1">Tarija</option>
-            <option [value]="2">Cochabamba</option>
-            <option [value]="3">Santa Cruz</option>
+            <option [value]="1">Central</option>
+            <option [value]="2">Secundaria</option>
           </select>
           } @else {
           <div class="px-3 py-2 border border-gray-300 text-xs md:text-sm bg-gray-50">
@@ -192,9 +191,8 @@ export class DropSummaryComponent {
   onBranchChange(id: string) {
     const branchId = Number(id);
     const branches: { [key: number]: string } = {
-      1: 'Tarija',
-      2: 'Cochabamba',
-      3: 'Santa Cruz',
+      1: 'Central',
+      2: 'Secundaria',
     };
     this.sessionService.setSucursal(branchId, branches[branchId]);
   }

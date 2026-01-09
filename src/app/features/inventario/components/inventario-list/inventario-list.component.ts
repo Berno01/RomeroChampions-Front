@@ -14,7 +14,7 @@ import { InventarioItem } from '../../../../core/models/inventario.models';
 import { InventarioMatrizComponent } from '../inventario-matriz/inventario-matriz.component';
 import { take } from 'rxjs/operators';
 
-type CategoriaFiltro = 'Todas' | 'Poleras' | 'Pantalones' | 'Shorts' | 'Hoodies';
+type CategoriaFiltro = string;
 
 @Component({
   selector: 'app-inventario-list',
@@ -50,7 +50,7 @@ type CategoriaFiltro = 'Todas' | 'Poleras' | 'Pantalones' | 'Shorts' | 'Hoodies'
 
             <!-- Pills de Categoría -->
             <div class="flex flex-wrap gap-2">
-              @for (cat of categorias; track cat) {
+              @for (cat of categoriasDisponibles(); track cat) {
               <button
                 type="button"
                 class="px-4 py-2 text-xs md:text-sm font-semibold tracking-wider transition-all"
@@ -81,15 +81,15 @@ type CategoriaFiltro = 'Todas' | 'Poleras' | 'Pantalones' | 'Shorts' | 'Hoodies'
                 }
               </select>
 
-              <!-- Corte -->
+              <!-- Estilo -->
               <select
                 class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black text-sm bg-white"
-                [(ngModel)]="corteSeleccionado"
+                [(ngModel)]="estiloSeleccionado"
                 (ngModelChange)="onFilterChange()"
               >
-                <option value="">Todos los cortes</option>
-                @for (corte of cortesDisponibles(); track corte) {
-                <option [value]="corte">{{ corte }}</option>
+                <option value="">Todos los estilos</option>
+                @for (estilo of estilosDisponibles(); track estilo) {
+                <option [value]="estilo">{{ estilo }}</option>
                 }
               </select>
             </div>
@@ -178,8 +178,8 @@ type CategoriaFiltro = 'Todas' | 'Poleras' | 'Pantalones' | 'Shorts' | 'Hoodies'
                   </td>
                   <td class="px-4 py-3">
                     <div class="font-semibold text-gray-900 text-sm">{{ item.nombre_modelo }}</div>
-                    @if (item.corte) {
-                    <div class="text-xs text-gray-500 mt-0.5">{{ item.corte }}</div>
+                    @if (item.estilo) {
+                    <div class="text-xs text-gray-500 mt-0.5">{{ item.estilo }}</div>
                     }
                   </td>
                   <td class="px-4 py-3 text-sm text-gray-700">
@@ -253,8 +253,8 @@ type CategoriaFiltro = 'Todas' | 'Poleras' | 'Pantalones' | 'Shorts' | 'Hoodies'
                     <h3 class="font-semibold text-gray-900 truncate">{{ item.nombre_modelo }}</h3>
                     <p class="text-xs text-gray-500 mt-1">{{ item.categoria }}</p>
                     <p class="text-xs text-gray-500">{{ item.marca }}</p>
-                    @if (item.corte) {
-                    <p class="text-xs text-gray-500">{{ item.corte }}</p>
+                    @if (item.estilo) {
+                    <p class="text-xs text-gray-500">{{ item.estilo }}</p>
                     }
                   </div>
                 </div>
@@ -304,23 +304,26 @@ export class InventarioListComponent implements OnInit {
   searchTerm = signal<string>('');
   categoriaSeleccionada = signal<CategoriaFiltro>('Todas');
   marcaSeleccionada = signal<string>('');
-  corteSeleccionado = signal<string>('');
+  estiloSeleccionado = signal<string>('');
   expandedIds = signal<Set<number>>(new Set());
 
-  // Constantes
-  categorias: CategoriaFiltro[] = ['Todas', 'Poleras', 'Pantalones', 'Shorts', 'Hoodies'];
-
   // Computed
+  categoriasDisponibles = computed(() => {
+    const cats = this.inventario().map((i) => i.categoria).filter((c) => !!c);
+    const uniqueCats = Array.from(new Set(cats)).sort();
+    return ['Todas', ...uniqueCats];
+  });
+
   marcasDisponibles = computed(() => {
     const marcas = this.inventario().map((i) => i.marca);
     return Array.from(new Set(marcas)).sort();
   });
 
-  cortesDisponibles = computed(() => {
-    const cortes = this.inventario()
-      .map((i) => i.corte)
+  estilosDisponibles = computed(() => {
+    const estilos = this.inventario()
+      .map((i) => i.estilo)
       .filter((c): c is string => !!c);
-    return Array.from(new Set(cortes)).sort();
+    return Array.from(new Set(estilos)).sort();
   });
 
   inventarioFiltrado = computed(() => {
@@ -335,19 +338,7 @@ export class InventarioListComponent implements OnInit {
     // Filtro de categoría
     const cat = this.categoriaSeleccionada();
     if (cat !== 'Todas') {
-      items = items.filter((i) => {
-        const itemCat = i.categoria.toLowerCase();
-        const filterCat = cat.toLowerCase();
-
-        // Manejo de plurales/singulares
-        if (filterCat === 'pantalones') return itemCat.includes('pantal');
-        if (filterCat === 'poleras') return itemCat.includes('polera');
-        if (filterCat === 'shorts') return itemCat.includes('short');
-        if (filterCat === 'hoodies')
-          return itemCat.includes('hoodie') || itemCat.includes('hoddie');
-
-        return itemCat === filterCat;
-      });
+      items = items.filter((i) => i.categoria === cat);
     }
 
     // Filtro de marca
@@ -356,10 +347,10 @@ export class InventarioListComponent implements OnInit {
       items = items.filter((i) => i.marca === marca);
     }
 
-    // Filtro de corte
-    const corte = this.corteSeleccionado();
-    if (corte) {
-      items = items.filter((i) => i.corte === corte);
+    // Filtro de estilo
+    const estilo = this.estiloSeleccionado();
+    if (estilo) {
+      items = items.filter((i) => i.estilo === estilo);
     }
 
     return items;

@@ -7,14 +7,14 @@ export class SessionService {
   // Valores hardcoded para desarrollo
   // La sucursal que viene de la BD del usuario (ADMIN también tiene una)
   readonly userId = signal<number>(1);
-  readonly sucursalId = signal<number>(1); // Tarija por defecto
-  readonly sucursalNombre = signal<string>('Tarija');
+  readonly sucursalId = signal<number>(1); // Central por defecto
+  readonly sucursalNombre = signal<string>('Central');
   readonly rol = signal<string>('ADMIN');
 
   // Guardar la sucursal original del usuario (la que tiene en BD al loguearse)
   // Esta NUNCA cambia, es la sucursal "base" del usuario
-  private readonly userOriginalSucursalId = signal<number>(1); // Tarija
-  private readonly userOriginalSucursalNombre = signal<string>('Tarija');
+  private readonly userOriginalSucursalId = signal<number>(1); // Central
+  private readonly userOriginalSucursalNombre = signal<string>('Central');
 
   constructor() {}
 

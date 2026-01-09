@@ -27,8 +27,8 @@ export class AuthService {
         console.log('Respuesta del Backend:', response); // DEBUG
 
         // Lógica específica para asignar sucursal según el rol
-        let idSucursal = 1; // Default para ADMIN (Tarija)
-        let nombreSucursal = 'Tarija';
+        let idSucursal = 1; // Default para ADMIN (Central)
+        let nombreSucursal = 'Central';
 
         if (response.rol === 'VENDEDOR') {
           // Si es vendedor, usamos la sucursal que viene del backend
@@ -75,9 +75,8 @@ export class AuthService {
 
   private getSucursalName(id: number): string {
     const sucursales: { [key: number]: string } = {
-      1: 'Tarija',
-      2: 'Cochabamba',
-      3: 'Santa Cruz',
+      1: 'Central',
+      2: 'Secundaria',
     };
     return sucursales[id] || 'Sucursal Desconocida';
   }
@@ -101,7 +100,7 @@ export class AuthService {
 
   private sincronizarVariablesGlobales(usuario: Usuario) {
     // Asignar valores a SessionService
-    const nombreSucursal = usuario.nombre_sucursal || 'Tarija';
+    const nombreSucursal = usuario.nombre_sucursal || 'Central';
     const idSucursal = usuario.id_sucursal || 1;
 
     this.sessionService.initSession(usuario.id_usuario, idSucursal, nombreSucursal, usuario.rol);

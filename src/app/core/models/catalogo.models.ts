@@ -27,7 +27,9 @@ export interface DetallePrendaDTO {
   nombreModelo: string;
   nombreMarca: string;
   nombreCategoria: string;
-  nombreCorte: string;
+  nombreEstilo: string;
+  nombreGenero?: string;
+  codigo?: string;
   precio: number;
   stockTotalSucursal: number;
   colores: ColorDTO[];

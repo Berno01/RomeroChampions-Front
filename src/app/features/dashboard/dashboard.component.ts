@@ -308,7 +308,7 @@ export class DashboardComponent implements OnInit {
   }
 
   getSucursalName(id: number): string {
-    const sucursales: { [key: number]: string } = { 1: 'Tarija', 2: 'Cochabamba', 3: 'Santa Cruz' };
+    const sucursales: { [key: number]: string } = { 1: 'Central', 2: 'Secundaria' };
     return sucursales[id] || 'Desconocida';
   }
 }

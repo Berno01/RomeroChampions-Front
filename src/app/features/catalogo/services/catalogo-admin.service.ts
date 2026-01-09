@@ -9,7 +9,8 @@ import {
   ApiModeloDTO,
   MarcaDTO,
   CategoriaDTO,
-  CorteDTO,
+  EstiloDTO,
+  GeneroDTO,
   TallaDTO,
   ColorDTO,
 } from '../models/catalogo-admin.models';
@@ -42,7 +43,9 @@ export class CatalogoAdminService {
           precio: modelo.precio || 0,
           marca: modelo.marca,
           categoria: modelo.categoria,
-          corte: modelo.corte,
+          estilo: modelo.estilo,
+          genero: modelo.genero,
+          codigo: modelo.codigo,
           colores: modelo.colores.map((color) => ({
             id: color.id,
             fotoUrl: color.foto_url, // snake_case → camelCase
@@ -66,7 +69,9 @@ export class CatalogoAdminService {
         precio: modelo.precio || 0,
         marca: modelo.marca,
         categoria: modelo.categoria,
-        corte: modelo.corte,
+        estilo: modelo.estilo,
+        genero: modelo.genero,
+        codigo: modelo.codigo,
         colores: modelo.colores.map((color: any) => ({
           id: color.id,
           fotoUrl: color.foto_url || color.fotoUrl,
@@ -122,13 +127,22 @@ export class CatalogoAdminService {
     return this.http.post<CategoriaDTO>(`${this.apiUrl}/catalogo/categorias`, { nombre });
   }
 
-  // ========== CORTES ==========
+  // ========== ESTILOS ==========
   /**
-   * POST /api/catalogo/cortes
-   * Crea un nuevo corte
+   * POST /api/catalogo/estilos
+   * Crea un nuevo estilo
    */
-  createCorte(nombre: string): Observable<CorteDTO> {
-    return this.http.post<CorteDTO>(`${this.apiUrl}/catalogo/cortes`, { nombre });
+  createEstilo(nombre: string): Observable<EstiloDTO> {
+    return this.http.post<EstiloDTO>(`${this.apiUrl}/catalogo/estilos`, { nombre });
+  }
+
+  // ========== GÉNEROS ==========
+  /**
+   * POST /api/catalogo/generos
+   * Crea un nuevo género
+   */
+  createGenero(nombre: string): Observable<GeneroDTO> {
+    return this.http.post<GeneroDTO>(`${this.apiUrl}/catalogo/generos`, { nombre });
   }
 
   // ========== TALLAS ==========
@@ -170,11 +184,35 @@ export class CatalogoAdminService {
   }
 
   /**
-   * PUT /api/catalogo/cortes/{id}
-   * Actualiza un corte existente
+   * PUT /api/catalogo/estilos/{id}
+   * Actualiza un estilo existente
    */
-  updateCorte(id: number, nombre: string): Observable<CorteDTO> {
-    return this.http.put<CorteDTO>(`${this.apiUrl}/catalogo/cortes/${id}`, { id, nombre });
+  updateEstilo(id: number, nombre: string): Observable<EstiloDTO> {
+    return this.http.put<EstiloDTO>(`${this.apiUrl}/catalogo/estilos/${id}`, { id, nombre });
+  }
+
+  /**
+   * PUT /api/catalogo/generos/{id}
+   * Actualiza un género existente
+   */
+  updateGenero(id: number, nombre: string): Observable<GeneroDTO> {
+    return this.http.put<GeneroDTO>(`${this.apiUrl}/catalogo/generos/${id}`, { id, nombre });
+  }
+
+  /**
+   * DELETE /api/catalogo/estilos/{id}
+   * Elimina un estilo existente
+   */
+  deleteEstilo(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/catalogo/estilos/${id}`);
+  }
+
+  /**
+   * DELETE /api/catalogo/generos/{id}
+   * Elimina un género existente
+   */
+  deleteGenero(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/catalogo/generos/${id}`);
   }
 
   /**

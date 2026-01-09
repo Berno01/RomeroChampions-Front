@@ -65,8 +65,9 @@ export class VentasService {
       monto_efectivo: sale.monto_efectivo ?? sale.montoEfectivo ?? 0,
       monto_qr: sale.monto_qr ?? sale.montoQr ?? 0,
       monto_tarjeta: sale.monto_tarjeta ?? sale.montoTarjeta ?? 0,
-      monto_giftcard: sale.monto_giftcard ?? sale.montoGiftcard ?? 0,
-      tipo_venta: sale.tipo_venta ?? sale.tipoVenta ?? 'LOCAL',
+      tipo_venta: sale.tipo_venta ?? sale.tipoVenta ?? 'CONTADO',
+      fecha_limite: sale.fecha_limite ?? sale.fechaLimite ?? null,
+      saldo_pendiente: sale.saldo_pendiente ?? sale.saldoPendiente ?? 0,
       fecha_venta: sale.fecha_venta ?? sale.fechaVenta,
       estado_venta: sale.estado_venta ?? sale.estadoVenta ?? true,
       detalle_venta: (sale.detalle_venta ?? sale.detalleVenta ?? []).map((detalle: any) => ({

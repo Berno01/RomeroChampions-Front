@@ -40,9 +40,8 @@ import { VentaDTO } from '../../../../core/models/venta.models';
                 (ngModelChange)="onBranchChange($event)"
               >
                 <option [value]="null">Todas</option>
-                <option [value]="1">Tarija</option>
-                <option [value]="2">Cochabamba</option>
-                <option [value]="3">Santa Cruz</option>
+                <option [value]="1">Central</option>
+                <option [value]="2">Secundaria</option>
               </select>
             </div>
             }
@@ -200,11 +199,6 @@ import { VentaDTO } from '../../../../core/models/venta.models';
                 <th
                   class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider"
                 >
-                  Giftcard
-                </th>
-                <th
-                  class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider"
-                >
                   Descuento
                 </th>
                 <th
@@ -239,33 +233,29 @@ import { VentaDTO } from '../../../../core/models/venta.models';
                 <td class="px-6 py-4 text-sm">
                   <span
                     class="px-2 py-1 text-xs font-medium"
-                    [class.bg-black]="sale.tipo_venta === 'LOCAL'"
-                    [class.text-white]="sale.tipo_venta === 'LOCAL'"
-                    [class.bg-gray-200]="sale.tipo_venta === 'ENVIO'"
-                    [class.text-gray-700]="sale.tipo_venta === 'ENVIO'"
+                    [class.bg-black]="sale.tipo_venta === 'CONTADO'"
+                    [class.text-white]="sale.tipo_venta === 'CONTADO'"
+                    [class.bg-gray-200]="sale.tipo_venta === 'CREDITO'"
+                    [class.text-gray-700]="sale.tipo_venta === 'CREDITO'"
                   >
                     {{ sale.tipo_venta }}
                   </span>
                 </td>
                 <td class="px-6 py-4 text-sm text-gray-900 text-right">
-                  {{ sale.tipo_venta === 'ENVIO' ? '-' : sale.monto_efectivo.toFixed(2) }}
+                  {{ sale.monto_efectivo.toFixed(2) }}
                 </td>
                 <td class="px-6 py-4 text-sm text-gray-900 text-right">
-                  {{ sale.tipo_venta === 'ENVIO' ? '-' : sale.monto_qr.toFixed(2) }}
+                  {{ sale.monto_qr.toFixed(2) }}
                 </td>
                 <td class="px-6 py-4 text-sm text-gray-900 text-right">
-                  {{ sale.tipo_venta === 'ENVIO' ? '-' : sale.monto_tarjeta.toFixed(2) }}
-                </td>
-                <td class="px-6 py-4 text-sm text-gray-900 text-right">
-                  {{ sale.tipo_venta === 'ENVIO' ? '-' : (sale.monto_giftcard || 0).toFixed(2) }}
+                  {{ sale.monto_tarjeta.toFixed(2) }}
                 </td>
                 <td class="px-6 py-4 text-sm text-gray-900 text-right">
                   @if (sale.descuento && sale.descuento > 0) {
                   <div class="flex flex-col items-end gap-0.5">
                     <span class="font-medium">{{
-                      sale.tipo_venta === 'ENVIO' ? '-' : sale.descuento.toFixed(2)
+                      sale.descuento.toFixed(2)
                     }}</span>
-                    @if (sale.tipo_venta !== 'ENVIO') {
                     <span
                       class="text-xs px-1.5 py-0.5 rounded"
                       [class.bg-blue-100]="sale.tipo_descuento === 'DESCUENTO'"
@@ -275,16 +265,13 @@ import { VentaDTO } from '../../../../core/models/venta.models';
                     >
                       {{ sale.tipo_descuento }}
                     </span>
-                    }
                   </div>
                   } @else {
-                  <span class="text-gray-400">{{
-                    sale.tipo_venta === 'ENVIO' ? '-' : '0.00'
-                  }}</span>
+                  <span class="text-gray-400">0.00</span>
                   }
                 </td>
                 <td class="px-6 py-4 text-sm font-semibold text-gray-900 text-right">
-                  {{ sale.tipo_venta === 'ENVIO' ? '-' : sale.total.toFixed(2) }}
+                  {{ sale.total.toFixed(2) }}
                 </td>
                 <td class="px-6 py-4 text-sm text-gray-900">
                   {{ sale.username || '-' }}
@@ -365,9 +352,6 @@ import { VentaDTO } from '../../../../core/models/venta.models';
                   {{ totals().tarjeta.toFixed(2) }}
                 </td>
                 <td class="px-6 py-4 text-sm font-bold text-gray-900 text-right">
-                  {{ totals().giftcard.toFixed(2) }}
-                </td>
-                <td class="px-6 py-4 text-sm font-bold text-gray-900 text-right">
                   {{ totals().descuento.toFixed(2) }}
                 </td>
                 <td class="px-6 py-4 text-sm font-bold text-gray-900 text-right bg-gray-200">
@@ -434,11 +418,11 @@ import { VentaDTO } from '../../../../core/models/venta.models';
                 <span class="text-gray-500 uppercase tracking-wide">Tipo</span>
                 <p class="mt-0.5">
                   <span
-                    class="px-2 py-0.5 text-xs font-medium inline-block"
-                    [class.bg-black]="sale.tipo_venta === 'LOCAL'"
-                    [class.text-white]="sale.tipo_venta === 'LOCAL'"
-                    [class.bg-gray-200]="sale.tipo_venta === 'ENVIO'"
-                    [class.text-gray-700]="sale.tipo_venta === 'ENVIO'"
+                    class="px-2 py-0.5 text-xs font-medium inline-block rounded"
+                    [class.bg-green-100]="sale.tipo_venta === 'CONTADO'"
+                    [class.text-green-800]="sale.tipo_venta === 'CONTADO'"
+                    [class.bg-blue-100]="sale.tipo_venta === 'CREDITO'"
+                    [class.text-blue-800]="sale.tipo_venta === 'CREDITO'"
                   >
                     {{ sale.tipo_venta }}
                   </span>
@@ -465,13 +449,6 @@ import { VentaDTO } from '../../../../core/models/venta.models';
                 <span class="text-gray-600">Tarjeta</span>
                 <span class="font-medium text-gray-900"
                   >Bs. {{ sale.monto_tarjeta.toFixed(2) }}</span
-                >
-              </div>
-              } @if (sale.monto_giftcard && sale.monto_giftcard > 0) {
-              <div class="flex justify-between">
-                <span class="text-gray-600">Giftcard</span>
-                <span class="font-medium text-gray-900"
-                  >Bs. {{ sale.monto_giftcard.toFixed(2) }}</span
                 >
               </div>
               }
@@ -571,10 +548,6 @@ import { VentaDTO } from '../../../../core/models/venta.models';
                 <span class="text-gray-600">Tarjeta:</span>
                 <span class="font-bold text-gray-900">Bs. {{ totals().tarjeta.toFixed(2) }}</span>
               </div>
-              <div class="flex justify-between">
-                <span class="text-gray-600">Giftcard:</span>
-                <span class="font-bold text-gray-900">Bs. {{ totals().giftcard.toFixed(2) }}</span>
-              </div>
               <div class="flex justify-between pt-2 border-t-2 border-gray-300">
                 <span class="font-bold text-gray-900">TOTAL:</span>
                 <span class="font-bold text-gray-900 text-base"
@@ -627,15 +600,17 @@ export class SalesListComponent {
 
   totals = computed(() => {
     const salesList = this.sales();
-    // Filtrar solo ventas tipo LOCAL para los totales
-    const localSales = salesList.filter((sale) => sale.tipo_venta !== 'ENVIO');
+    // Filtrar solo ventas completadas para los totales (o todas?)
+    // El original filtraba 'ENVIO' para no sumar? "Filtrar solo ventas tipo LOCAL para los totales"
+    // Ahora 'CONTADO' y 'CREDITO' suman? Supongo que sí.
+    // Asumiremos que ambas suman lo pagado.
+    
     return {
-      efectivo: localSales.reduce((sum, sale) => sum + (sale.monto_efectivo || 0), 0),
-      qr: localSales.reduce((sum, sale) => sum + (sale.monto_qr || 0), 0),
-      tarjeta: localSales.reduce((sum, sale) => sum + (sale.monto_tarjeta || 0), 0),
-      giftcard: localSales.reduce((sum, sale) => sum + (sale.monto_giftcard || 0), 0),
-      total: localSales.reduce((sum, sale) => sum + (sale.total || 0), 0),
-      descuento: localSales.reduce((sum, sale) => sum + (sale.descuento || 0), 0),
+      efectivo: salesList.reduce((sum, sale) => sum + (sale.monto_efectivo || 0), 0),
+      qr: salesList.reduce((sum, sale) => sum + (sale.monto_qr || 0), 0),
+      tarjeta: salesList.reduce((sum, sale) => sum + (sale.monto_tarjeta || 0), 0),
+      total: salesList.reduce((sum, sale) => sum + (sale.total || 0), 0),
+      descuento: salesList.reduce((sum, sale) => sum + (sale.descuento || 0), 0),
     };
   });
 
@@ -756,9 +731,8 @@ export class SalesListComponent {
 
   getBranchName(id: number): string {
     const branches: Record<number, string> = {
-      1: 'Tarija',
-      2: 'Cochabamba',
-      3: 'Santa Cruz',
+      1: 'Central',
+      2: 'Secundaria',
     };
     return branches[id] || `Sucursal ${id}`;
   }

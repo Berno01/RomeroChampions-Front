@@ -17,8 +17,9 @@ export interface VentaDTO {
   monto_efectivo: number;
   monto_qr: number;
   monto_tarjeta: number;
-  monto_giftcard: number; // Nuevo método de pago
-  tipo_venta: string; // 'LOCAL' | 'ENVIO'
+  tipo_venta: string; // 'CONTADO' | 'CREDITO'
+  fecha_limite?: string | null;
+  saldo_pendiente: number;
   fecha_venta?: string; // Viene del back
   estado_venta?: boolean; // Viene del back (true=activa, false=anulada)
   detalle_venta: DetalleVentaDTO[];

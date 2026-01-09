@@ -18,7 +18,8 @@ import {
   OpcionesCatalogoDTO,
   MarcaDTO,
   CategoriaDTO,
-  CorteDTO,
+  EstiloDTO,
+  GeneroDTO,
   TallaDTO,
   ColorDTO,
 } from '../../models/catalogo-admin.models';
@@ -199,6 +200,20 @@ import { ColorDraftDTO, FormDraftState } from '../../models/create-modelo.models
               />
             </div>
 
+            <!-- Código -->
+            <div>
+              <label class="block text-xs font-semibold tracking-[0.15em] text-gray-400 mb-2">
+                CÓDIGO
+              </label>
+              <input
+                type="text"
+                class="w-full border-b-2 border-gray-200 focus:border-black outline-none py-2 text-sm transition-colors"
+                placeholder="Ej: MOD-001"
+                [(ngModel)]="formDraft().codigo"
+                name="codigo"
+              />
+            </div>
+
             <!-- Precio -->
             <div>
               <label class="block text-xs font-semibold tracking-[0.15em] text-gray-400 mb-2">
@@ -267,44 +282,44 @@ import { ColorDraftDTO, FormDraftState } from '../../models/create-modelo.models
               </div>
             </div>
 
-            <!-- Corte / Fit -->
+            <!-- Estilo / Fit -->
             <div>
               <label class="block text-xs font-semibold tracking-[0.15em] text-gray-400 mb-3">
-                CORTE / FIT
+                ESTILO / FIT
               </label>
               <div class="flex gap-3 items-center flex-wrap">
-                @for (corte of opciones().cortes; track corte.id) {
+                @for (estilo of opciones().estilos; track estilo.id) {
                 <div class="relative group">
                   <button
                     type="button"
                     class="px-6 py-2 text-xs font-bold tracking-wider transition-all"
-                    [class.bg-black]="formDraft().idCorte === corte.id"
-                    [class.text-white]="formDraft().idCorte === corte.id"
-                    [class.bg-white]="formDraft().idCorte !== corte.id"
-                    [class.text-black]="formDraft().idCorte !== corte.id"
-                    [class.border]="formDraft().idCorte !== corte.id"
-                    [class.border-gray-300]="formDraft().idCorte !== corte.id"
-                    (click)="selectCorte(corte.id)"
+                    [class.bg-black]="formDraft().idEstilo === estilo.id"
+                    [class.text-white]="formDraft().idEstilo === estilo.id"
+                    [class.bg-white]="formDraft().idEstilo !== estilo.id"
+                    [class.text-black]="formDraft().idEstilo !== estilo.id"
+                    [class.border]="formDraft().idEstilo !== estilo.id"
+                    [class.border-gray-300]="formDraft().idEstilo !== estilo.id"
+                    (click)="selectEstilo(estilo.id)"
                   >
-                    {{ corte.nombre.toUpperCase() }}
+                    {{ estilo.nombre.toUpperCase() }}
                   </button>
                   <button
                     type="button"
                     class="absolute -top-2 -right-2 bg-white rounded-full p-1 shadow-md opacity-0 group-hover:opacity-100 transition-opacity text-gray-500 hover:text-black z-10"
-                    (click)="$event.stopPropagation(); onEditCorte(corte.id)"
-                    title="Editar corte"
+                    (click)="$event.stopPropagation(); onEditEstilo(estilo.id)"
+                    title="Editar estilo"
                   >
                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
                   </button>
                 </div>
                 }
 
-                <!-- Botón + para crear nuevo corte -->
+                <!-- Botón + para crear nuevo estilo -->
                 <button
                   type="button"
                   class="w-12 h-12 border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-400 hover:border-black hover:text-black transition-all"
-                  (click)="openMiniModalCorte()"
-                  title="Crear nuevo corte"
+                  (click)="openMiniModalEstilo()"
+                  title="Crear nuevo estilo"
                 >
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
@@ -315,6 +330,32 @@ import { ColorDraftDTO, FormDraftState } from '../../models/create-modelo.models
                     ></path>
                   </svg>
                 </button>
+              </div>
+            </div>
+
+            <!-- Género -->
+            <div>
+              <label class="block text-xs font-semibold tracking-[0.15em] text-gray-400 mb-2">
+                GÉNERO
+              </label>
+              <div class="flex gap-2 items-center">
+                <select
+                  class="w-full border-b-2 border-gray-200 focus:border-black outline-none py-2 text-sm bg-transparent transition-colors"
+                  [ngModel]="formDraft().idGenero"
+                  (ngModelChange)="onGeneroSelected($event)"
+                  name="idGenero"
+                >
+                  <option [ngValue]="null" disabled>SELECCIONA UN GÉNERO</option>
+                  <option [ngValue]="'CREATE_NEW'" class="font-bold">+ CREAR NUEVO GÉNERO...</option>
+                  @for (genero of opciones().generos; track genero.id) {
+                  <option [ngValue]="genero.id">{{ genero.nombre.toUpperCase() }}</option>
+                  }
+                </select>
+                @if (isValidId(formDraft().idGenero)) {
+                  <button type="button" class="text-gray-400 hover:text-black p-1" (click)="onEditGenero(formDraft().idGenero!)" title="Editar género">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                  </button>
+                }
               </div>
             </div>
 
@@ -633,7 +674,9 @@ export class NuevoModeloModalComponent {
           precio: modelo.precio || 0,
           idMarca: modelo.marca.id,
           idCategoria: modelo.categoria.id,
-          idCorte: modelo.corte.id,
+          idEstilo: modelo.estilo.id,
+          idGenero: modelo.genero?.id ?? null,
+          codigo: modelo.codigo || '',
           idsTallasSelected: Array.from(tallasIds),
           coloresDraft: coloresDraft,
           activeColorIdForUpload: coloresDraft.length > 0 ? coloresDraft[0].idColor : null,
@@ -654,7 +697,9 @@ export class NuevoModeloModalComponent {
     precio: 0,
     idMarca: null,
     idCategoria: null,
-    idCorte: null,
+    idEstilo: null,
+    idGenero: null,
+    codigo: '',
     idsTallasSelected: [],
     coloresDraft: [],
     activeColorIdForUpload: null,
@@ -671,7 +716,7 @@ export class NuevoModeloModalComponent {
 
   // Mini-modal state
   showMiniModal = signal<boolean>(false);
-  miniModalType = signal<'marca' | 'categoria' | 'corte' | 'talla' | 'color' | null>(null);
+  miniModalType = signal<'marca' | 'categoria' | 'estilo' | 'genero' | 'talla' | 'color' | null>(null);
   miniModalMode = signal<'create' | 'edit'>('create');
   miniModalId = signal<number | null>(null);
   miniModalTitle = signal<string>('');
@@ -699,9 +744,10 @@ export class NuevoModeloModalComponent {
     return (
       draft.nombreModelo.trim() !== '' &&
       draft.precio > 0 &&
-      draft.idMarca !== null &&
+      draft.idEstilo !== null &&
+      draft.idGenero !== null &&
+      // draft.codigo.trim() !== '' && // Puede ser opcional, descomentar si es obligatorio
       draft.idCategoria !== null &&
-      draft.idCorte !== null &&
       draft.idsTallasSelected.length > 0 &&
       draft.coloresDraft.filter((c) => c.isSelected && (c.photoFile || c.previewUrl)).length > 0
     );
@@ -780,8 +826,8 @@ export class NuevoModeloModalComponent {
   }
 
   // Métodos de selección
-  selectCorte(id: number) {
-    this.formDraft.update((d) => ({ ...d, idCorte: id }));
+  selectEstilo(id: number) {
+    this.formDraft.update((d) => ({ ...d, idEstilo: id }));
   }
 
   toggleColor(color: ColorDTO) {
@@ -934,9 +980,21 @@ export class NuevoModeloModalComponent {
     }
   }
 
+  // Manejar cambio en select de Género
+  onGeneroSelected(value: number | string | null) {
+    if (value === 'CREATE_NEW') {
+      this.formDraft.update((d) => ({ ...d, idGenero: null }));
+      this.openMiniModalGenero();
+    } else {
+      this.formDraft.update((d) => ({ ...d, idGenero: value as number | null }));
+    }
+  }
+
   // Mini-modales para crear opciones
   openMiniModalMarca() {
     this.miniModalType.set('marca');
+    this.miniModalMode.set('create');
+    this.miniModalId.set(null);
     this.miniModalTitle.set('Nueva Marca');
     this.miniModalPlaceholder.set('Nombre de la marca');
     this.miniModalValue = '';
@@ -945,22 +1003,38 @@ export class NuevoModeloModalComponent {
 
   openMiniModalCategoria() {
     this.miniModalType.set('categoria');
+    this.miniModalMode.set('create');
+    this.miniModalId.set(null);
     this.miniModalTitle.set('Nueva Categoría');
     this.miniModalPlaceholder.set('Nombre de la categoría');
     this.miniModalValue = '';
     this.showMiniModal.set(true);
   }
 
-  openMiniModalCorte() {
-    this.miniModalType.set('corte');
-    this.miniModalTitle.set('Nuevo Corte');
-    this.miniModalPlaceholder.set('Nombre del corte');
+  openMiniModalEstilo() {
+    this.miniModalType.set('estilo');
+    this.miniModalMode.set('create');
+    this.miniModalId.set(null);
+    this.miniModalTitle.set('Nuevo Estilo');
+    this.miniModalPlaceholder.set('Nombre del estilo');
+    this.miniModalValue = '';
+    this.showMiniModal.set(true);
+  }
+
+  openMiniModalGenero() {
+    this.miniModalType.set('genero');
+    this.miniModalMode.set('create');
+    this.miniModalId.set(null);
+    this.miniModalTitle.set('Nuevo Género');
+    this.miniModalPlaceholder.set('Nombre del género');
     this.miniModalValue = '';
     this.showMiniModal.set(true);
   }
 
   onCreateColor() {
     this.miniModalType.set('color');
+    this.miniModalMode.set('create');
+    this.miniModalId.set(null);
     this.miniModalTitle.set('Nuevo Color');
     this.miniModalPlaceholder.set('Nombre del color');
     this.miniModalValue = '';
@@ -970,6 +1044,8 @@ export class NuevoModeloModalComponent {
 
   onCreateTalla() {
     this.miniModalType.set('talla');
+    this.miniModalMode.set('create');
+    this.miniModalId.set(null);
     this.miniModalTitle.set('Nueva Talla');
     this.miniModalPlaceholder.set('Nombre de la talla (ej: XL)');
     this.miniModalValue = '';
@@ -979,6 +1055,8 @@ export class NuevoModeloModalComponent {
   closeMiniModal() {
     this.showMiniModal.set(false);
     this.miniModalType.set(null);
+    this.miniModalMode.set('create');
+    this.miniModalId.set(null);
     this.miniModalValue = '';
     this.miniModalColorHex = '#000000';
   }
@@ -1008,15 +1086,27 @@ export class NuevoModeloModalComponent {
     this.showMiniModal.set(true);
   }
 
-  onEditCorte(id: number) {
-    const corte = this.opciones().cortes.find((c) => c.id === id);
-    if (!corte) return;
-    this.miniModalType.set('corte');
+  onEditEstilo(id: number) {
+    const estilo = this.opciones().estilos.find((c) => c.id === id);
+    if (!estilo) return;
+    this.miniModalType.set('estilo');
     this.miniModalMode.set('edit');
     this.miniModalId.set(id);
-    this.miniModalTitle.set('EDITAR CORTE');
-    this.miniModalPlaceholder.set('Nombre del corte');
-    this.miniModalValue = corte.nombre;
+    this.miniModalTitle.set('EDITAR ESTILO');
+    this.miniModalPlaceholder.set('Nombre del estilo');
+    this.miniModalValue = estilo.nombre;
+    this.showMiniModal.set(true);
+  }
+
+  onEditGenero(id: number) {
+    const genero = this.opciones().generos?.find((g) => g.id === id);
+    if (!genero) return;
+    this.miniModalType.set('genero');
+    this.miniModalMode.set('edit');
+    this.miniModalId.set(id);
+    this.miniModalTitle.set('EDITAR GÉNERO');
+    this.miniModalPlaceholder.set('Nombre del género');
+    this.miniModalValue = genero.nombre;
     this.showMiniModal.set(true);
   }
 
@@ -1103,19 +1193,36 @@ export class NuevoModeloModalComponent {
         }
         break;
 
-      case 'corte':
+      case 'estilo':
         if (mode === 'create') {
-          this.catalogoService.createCorte(value).subscribe({
-            next: (nuevoCorte) => {
-              successCallback(`Corte "${nuevoCorte.nombre}" creado`);
-              this.formDraft.update((d) => ({ ...d, idCorte: nuevoCorte.id }));
+          this.catalogoService.createEstilo(value).subscribe({
+            next: (nuevoEstilo) => {
+              successCallback(`Estilo "${nuevoEstilo.nombre}" creado`);
+              this.formDraft.update((d) => ({ ...d, idEstilo: nuevoEstilo.id }));
             },
-            error: (err) => errorCallback(err, 'Error al crear el corte'),
+            error: (err) => errorCallback(err, 'Error al crear el estilo'),
           });
         } else {
-          this.catalogoService.updateCorte(id!, value).subscribe({
-            next: (corte) => successCallback(`Corte "${corte.nombre}" actualizado`),
-            error: (err) => errorCallback(err, 'Error al actualizar el corte'),
+          this.catalogoService.updateEstilo(id!, value).subscribe({
+            next: (estilo) => successCallback(`Estilo "${estilo.nombre}" actualizado`),
+            error: (err) => errorCallback(err, 'Error al actualizar el estilo'),
+          });
+        }
+        break;
+
+      case 'genero':
+        if (mode === 'create') {
+          this.catalogoService.createGenero(value).subscribe({
+            next: (nuevoGenero) => {
+              successCallback(`Género "${nuevoGenero.nombre}" creado`);
+              this.formDraft.update((d) => ({ ...d, idGenero: nuevoGenero.id }));
+            },
+            error: (err) => errorCallback(err, 'Error al crear el género'),
+          });
+        } else {
+          this.catalogoService.updateGenero(id!, value).subscribe({
+            next: (genero) => successCallback(`Género "${genero.nombre}" actualizado`),
+            error: (err) => errorCallback(err, 'Error al actualizar el género'),
           });
         }
         break;
@@ -1248,7 +1355,9 @@ export class NuevoModeloModalComponent {
       precio: draft.precio,
       idMarca: draft.idMarca!,
       idCategoria: draft.idCategoria!,
-      idCorte: draft.idCorte!,
+      idEstilo: draft.idEstilo!,
+      idGenero: draft.idGenero!,
+      codigo: draft.codigo,
       colores: coloresPayload,
       idsTallas: draft.idsTallasSelected,
     };

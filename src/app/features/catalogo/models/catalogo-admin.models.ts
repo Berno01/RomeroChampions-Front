@@ -10,7 +10,12 @@ export interface CategoriaDTO {
   nombre: string;
 }
 
-export interface CorteDTO {
+export interface EstiloDTO {
+  id: number;
+  nombre: string;
+}
+
+export interface GeneroDTO {
   id: number;
   nombre: string;
 }
@@ -29,7 +34,8 @@ export interface ColorDTO {
 export interface OpcionesCatalogoDTO {
   marcas: MarcaDTO[];
   categorias: CategoriaDTO[];
-  cortes: CorteDTO[];
+  estilos: EstiloDTO[];
+  generos?: GeneroDTO[]; // Opcional hasta que el backend lo envíe
   tallas: TallaDTO[];
   colores: ColorDTO[];
 }
@@ -53,7 +59,9 @@ export interface ModeloDTO {
   precio: number;
   marca: MarcaDTO;
   categoria: CategoriaDTO;
-  corte: CorteDTO;
+  estilo: EstiloDTO;
+  genero?: GeneroDTO;
+  codigo?: string;
   colores: ColorModeloDTO[];
 }
 
@@ -71,6 +79,8 @@ export interface ApiModeloDTO {
   precio: number;
   marca: MarcaDTO;
   categoria: CategoriaDTO;
-  corte: CorteDTO;
+  estilo: EstiloDTO;
+  genero?: GeneroDTO;
+  codigo?: string;
   colores: ApiColorModeloDTO[];
 }

@@ -40,7 +40,7 @@ export interface InventarioItem {
   foto_portada: string;
   categoria: string;
   marca: string;
-  corte: string;
+  estilo: string;
   total_stock_global: number;
 }
 

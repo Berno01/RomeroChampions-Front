@@ -17,7 +17,7 @@ import {
   OpcionesCatalogoDTO,
   MarcaDTO,
   CategoriaDTO,
-  CorteDTO,
+  EstiloDTO,
 } from '../../models/catalogo-admin.models';
 
 @Component({
@@ -112,13 +112,13 @@ import {
               }
             </div>
 
-            <!-- Dropdown Corte -->
+            <!-- Dropdown Estilo -->
             <div class="relative group">
               <button
                 class="flex items-center gap-2 text-xs md:text-sm font-medium text-gray-700 hover:text-black transition-colors uppercase tracking-wider"
-                (click)="toggleDropdown('corte')"
+                (click)="toggleDropdown('estilo')"
               >
-                {{ selectedCorte() ? selectedCorte()!.nombre : 'CORTE' }}
+                {{ selectedEstilo() ? selectedEstilo()!.nombre : 'ESTILO' }}
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     stroke-linecap="round"
@@ -129,23 +129,23 @@ import {
                 </svg>
               </button>
 
-              @if (showCorteDropdown()) {
+              @if (showEstiloDropdown()) {
               <div
                 class="absolute top-full left-0 mt-2 w-48 bg-white shadow-xl border border-gray-100 py-2 rounded-sm z-20"
               >
                 <button
                   class="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 transition-colors"
-                  (click)="selectCorte(null)"
+                  (click)="selectEstilo(null)"
                 >
                   Todos
                 </button>
-                @for (corte of opciones()?.cortes || []; track corte.id) {
+                @for (estilo of opciones()?.estilos || []; track estilo.id) {
                 <button
                   class="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 transition-colors"
-                  [class.font-bold]="selectedCorte()?.id === corte.id"
-                  (click)="selectCorte(corte)"
+                  [class.font-bold]="selectedEstilo()?.id === estilo.id"
+                  (click)="selectEstilo(estilo)"
                 >
-                  {{ corte.nombre }}
+                  {{ estilo.nombre }}
                 </button>
                 }
               </div>
@@ -279,12 +279,12 @@ export class CatalogoListComponent implements OnInit {
   searchQuery = signal<string>('');
   selectedCategoria = signal<CategoriaDTO | null>(null);
   selectedMarca = signal<MarcaDTO | null>(null);
-  selectedCorte = signal<CorteDTO | null>(null);
+  selectedEstilo = signal<EstiloDTO | null>(null);
 
   // Dropdowns
   showCategoriaDropdown = signal<boolean>(false);
   showMarcaDropdown = signal<boolean>(false);
-  showCorteDropdown = signal<boolean>(false);
+  showEstiloDropdown = signal<boolean>(false);
 
   // Modal
   showNuevoModeloModal = signal<boolean>(false);
@@ -294,10 +294,14 @@ export class CatalogoListComponent implements OnInit {
   filteredModelos = computed(() => {
     let result = this.modelos();
 
-    // Filtrar por búsqueda de texto
+    // Filtrar por búsqueda de texto (Nombre o Código)
     const query = this.searchQuery().toLowerCase();
     if (query) {
-      result = result.filter((m) => m.nombre.toLowerCase().includes(query));
+      result = result.filter(
+        (m) =>
+          m.nombre.toLowerCase().includes(query) ||
+          (m.codigo && m.codigo.toLowerCase().includes(query))
+      );
     }
 
     // Filtrar por categoría
@@ -312,10 +316,10 @@ export class CatalogoListComponent implements OnInit {
       result = result.filter((m) => m.marca.id === marca.id);
     }
 
-    // Filtrar por corte
-    const corte = this.selectedCorte();
-    if (corte) {
-      result = result.filter((m) => m.corte.id === corte.id);
+    // Filtrar por estilo
+    const estilo = this.selectedEstilo();
+    if (estilo) {
+      result = result.filter((m) => m.estilo.id === estilo.id);
     }
 
     return result;
@@ -346,17 +350,17 @@ export class CatalogoListComponent implements OnInit {
     });
   }
 
-  toggleDropdown(type: 'categoria' | 'marca' | 'corte') {
+  toggleDropdown(type: 'categoria' | 'marca' | 'estilo') {
     if (type === 'categoria') {
       this.showCategoriaDropdown.update((v) => !v);
       this.showMarcaDropdown.set(false);
-      this.showCorteDropdown.set(false);
+      this.showEstiloDropdown.set(false);
     } else if (type === 'marca') {
       this.showMarcaDropdown.update((v) => !v);
       this.showCategoriaDropdown.set(false);
-      this.showCorteDropdown.set(false);
+      this.showEstiloDropdown.set(false);
     } else {
-      this.showCorteDropdown.update((v) => !v);
+      this.showEstiloDropdown.update((v) => !v);
       this.showCategoriaDropdown.set(false);
       this.showMarcaDropdown.set(false);
     }
@@ -372,16 +376,16 @@ export class CatalogoListComponent implements OnInit {
     this.showMarcaDropdown.set(false);
   }
 
-  selectCorte(corte: CorteDTO | null) {
-    this.selectedCorte.set(corte);
-    this.showCorteDropdown.set(false);
+  selectEstilo(estilo: EstiloDTO | null) {
+    this.selectedEstilo.set(estilo);
+    this.showEstiloDropdown.set(false);
   }
 
   clearFilters() {
     this.searchQuery.set('');
     this.selectedCategoria.set(null);
     this.selectedMarca.set(null);
-    this.selectedCorte.set(null);
+    this.selectedEstilo.set(null);
   }
 
   onNewModelo() {

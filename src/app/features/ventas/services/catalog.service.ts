@@ -52,7 +52,7 @@ export class CatalogService {
       nombreModelo: item.nombreModelo ?? item.nombre_modelo ?? '',
       nombreMarca: item.nombreMarca ?? item.nombre_marca ?? '',
       nombreCategoria: item.nombreCategoria ?? item.nombre_categoria ?? '',
-      nombreCorte: item.nombreCorte ?? item.nombre_corte ?? '',
+      nombreEstilo: item.nombreEstilo ?? item.nombre_estilo ?? '',
       precio: item.precio ?? 0,
       stockTotalSucursal: item.stockTotalSucursal ?? item.stock_total_sucursal ?? 0,
       colores: (item.colores ?? []).map((color) => this.mapToColor(color)),
@@ -104,8 +104,8 @@ type ApiDetallePrendaDTO = {
   nombre_marca?: string;
   nombreCategoria?: string;
   nombre_categoria?: string;
-  nombreCorte?: string;
-  nombre_corte?: string;
+  nombreEstilo?: string;
+  nombre_estilo?: string;
   precio?: number;
   stockTotalSucursal?: number;
   stock_total_sucursal?: number;

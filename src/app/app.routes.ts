@@ -105,8 +105,12 @@ export const routes: Routes = [
       },
     ],
   },
-  {
-    path: 'inventario',
+  {    path: 'creditos',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/creditos/creditos.component').then((m) => m.CreditosComponent),
+  },
+  {    path: 'inventario',
     canActivate: [authGuard],
     loadComponent: () =>
       import('./features/inventario/components/inventario-list/inventario-list.component').then(

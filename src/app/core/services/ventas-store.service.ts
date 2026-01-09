@@ -26,20 +26,19 @@ export class VentasStoreService {
     efectivo: number;
     qr: number;
     tarjeta: number;
-    giftcard: number;
   }>({
     efectivo: 0,
     qr: 0,
     tarjeta: 0,
-    giftcard: 0,
   });
   readonly splitActive = signal<boolean>(false);
-  readonly selectedPaymentMethod = signal<'EFECTIVO' | 'QR' | 'TARJETA' | 'GIFTCARD' | ''>(
+  readonly selectedPaymentMethod = signal<'EFECTIVO' | 'QR' | 'TARJETA' | ''>(
     'EFECTIVO'
   );
   readonly descuento = signal<number>(0);
   readonly tipoDescuento = signal<'SIN DESCUENTO' | 'PROMOCION' | 'DESCUENTO'>('SIN DESCUENTO');
-  readonly tipoVenta = signal<'LOCAL' | 'ENVIO'>('LOCAL');
+  readonly tipoVenta = signal<'CONTADO' | 'CREDITO'>('CONTADO');
+  readonly fechaLimite = signal<string | null>(null);
   readonly editingSaleId = signal<number | null>(null);
   readonly isLoading = signal<boolean>(false);
   readonly processing = signal<boolean>(false); // Estado de procesamiento de venta
@@ -67,19 +66,24 @@ export class VentasStoreService {
     const editingId = this.editingSaleId();
     const descuentoValue = this.descuento();
     const tipoDescuentoValue = this.tipoDescuento();
+    const finalTotal = total - descuentoValue;
+    const totalPaid = payments.efectivo + payments.qr + payments.tarjeta;
+    const saldoPendiente = Math.max(0, parseFloat((finalTotal - totalPaid).toFixed(2)));
+
     // Siempre usar SessionService (que se actualiza tanto al crear como al editar)
     return {
       id_venta: editingId ?? undefined,
       id_sucursal: this.sessionService.sucursalId(),
       id_usuario: this.sessionService.userId(),
-      total: total - descuentoValue,
+      total: finalTotal,
       descuento: descuentoValue,
       tipo_descuento: tipoDescuentoValue,
       monto_efectivo: payments.efectivo,
       monto_qr: payments.qr,
       monto_tarjeta: payments.tarjeta,
-      monto_giftcard: payments.giftcard,
       tipo_venta: this.tipoVenta(),
+      fecha_limite: this.tipoVenta() === 'CREDITO' ? this.fechaLimite() : null,
+      saldo_pendiente: saldoPendiente,
       detalle_venta: this.cartItems().map((item) => ({
         id_variante: item.idVariante,
         cantidad: item.cantidad,
@@ -196,33 +200,63 @@ export class VentasStoreService {
     this.cartItems.set([]);
     this.resetPayments();
     this.editingSaleId.set(null);
-    this.tipoVenta.set('LOCAL');
+    this.tipoVenta.set('CONTADO');
     this.splitActive.set(false);
     this.selectedPaymentMethod.set('EFECTIVO');
     this.descuento.set(0);
     this.tipoDescuento.set('SIN DESCUENTO');
+    this.fechaLimite.set(null);
   }
 
-  setPayment(type: 'EFECTIVO' | 'QR' | 'TARJETA' | 'GIFTCARD', amount?: number) {
+  setPayment(type: 'EFECTIVO' | 'QR' | 'TARJETA', amount?: number) {
     const total = this.totalVenta() - this.descuento();
     const currentPayments = this.paymentAmounts();
-    const typeKey = type.toLowerCase() as 'efectivo' | 'qr' | 'tarjeta' | 'giftcard';
+    const typeKey = type.toLowerCase() as 'efectivo' | 'qr' | 'tarjeta';
+    const isCredito = this.tipoVenta() === 'CREDITO';
 
     // Contar cuántos métodos ya están activos (excluyendo el actual si está siendo reseleccionado)
     const activePayments = [
       currentPayments.efectivo > 0 && typeKey !== 'efectivo' ? 'efectivo' : null,
       currentPayments.qr > 0 && typeKey !== 'qr' ? 'qr' : null,
       currentPayments.tarjeta > 0 && typeKey !== 'tarjeta' ? 'tarjeta' : null,
-      currentPayments.giftcard > 0 && typeKey !== 'giftcard' ? 'giftcard' : null,
     ].filter((p) => p !== null);
 
-    // Si el tipo seleccionado ya está activo, resetear todo a ese método
-    if (currentPayments[typeKey] > 0) {
+    // Si es CREDITO, lógica simplificada: actualizar el monto del método sin resetear otros
+    if (isCredito) {
+      // Si ya hay 2 métodos activos y estamos intentando agregar un tercero (amount > 0), bloquear
+      // Si amount es 0 o undefined, asumimos que se quiere poner a 0, lo cual siempre se permite
+      if (activePayments.length >= 2 && (!currentPayments[typeKey] || currentPayments[typeKey] === 0) && amount && amount > 0) {
+        console.warn('Solo se permiten combinaciones de hasta 2 métodos de pago');
+        return;
+      }
+
+      const newAmount = amount !== undefined && amount >= 0 ? amount : 0;
+      
+      // Actualizar solo este método
+      this.paymentAmounts.update((prev) => ({
+        ...prev,
+        [typeKey]: newAmount,
+      }));
+      
+      this.splitActive.set(true);
+      return;
+    }
+
+    // --- LÓGICA CONTADO (Original) ---
+
+    // Si el tipo seleccionado ya está activo, resetear todo a ese método (Toggle behavior para single payment)
+    if (currentPayments[typeKey] > 0 && activePayments.length === 0 && (!amount || amount === total)) {
+       // Si era el único pago y se clickea de nuevo sin monto específico, no hacer nada o resetear?
+       // El comportamiento original reseteaba a TOTAL. Mantengamos eso para clicks simples.
+       // Pero si viene con amount específico (del modal), debemos respetarlo.
+    }
+
+    // Si el tipo seleccionado ya está activo y no es split, resetear todo a ese método
+    if (currentPayments[typeKey] > 0 && !this.splitActive() && (!amount || amount === total)) {
       this.paymentAmounts.set({
         efectivo: 0,
         qr: 0,
         tarjeta: 0,
-        giftcard: 0,
         [typeKey]: total,
       });
       this.splitActive.set(false);
@@ -236,12 +270,11 @@ export class VentasStoreService {
     }
 
     // Si no hay monto especificado o es el total completo, usar un solo método
-    if (!amount || amount <= 0 || amount >= total) {
+    if ((!amount || amount <= 0 || amount >= total) && activePayments.length === 0) {
       this.paymentAmounts.set({
         efectivo: 0,
         qr: 0,
         tarjeta: 0,
-        giftcard: 0,
         [typeKey]: total,
       });
       this.splitActive.set(false);
@@ -249,10 +282,12 @@ export class VentasStoreService {
     }
 
     // Validar que el monto no exceda el total (ya cubierto arriba)
-    if (amount > total) {
+    if (amount && amount > total) {
       console.warn('El monto no puede exceder el total');
       return;
     }
+
+    const finalAmount = amount || 0;
 
     // Si no hay ningún método activo todavía (es el primer método que se está seleccionando)
     // resetear todo primero antes de asignar
@@ -261,14 +296,13 @@ export class VentasStoreService {
         efectivo: 0,
         qr: 0,
         tarjeta: 0,
-        giftcard: 0,
-        [typeKey]: amount,
+        [typeKey]: finalAmount,
       });
     } else {
       // Ya hay un método activo, agregar este como segundo
-      const newPayments: { efectivo: number; qr: number; tarjeta: number; giftcard: number } = {
+      const newPayments: { efectivo: number; qr: number; tarjeta: number } = {
         ...currentPayments,
-        [typeKey]: amount,
+        [typeKey]: finalAmount,
       };
       this.paymentAmounts.set(newPayments);
     }
@@ -277,14 +311,13 @@ export class VentasStoreService {
   }
 
   // Nuevo método para establecer el monto restante en un método específico
-  setRemainingPayment(type: 'EFECTIVO' | 'QR' | 'TARJETA' | 'GIFTCARD') {
+  setRemainingPayment(type: 'EFECTIVO' | 'QR' | 'TARJETA') {
     const total = this.totalVenta() - this.descuento();
     const currentPayments = this.paymentAmounts();
     const currentTotal =
       currentPayments.efectivo +
       currentPayments.qr +
-      currentPayments.tarjeta +
-      currentPayments.giftcard;
+      currentPayments.tarjeta;
     const remaining = total - currentTotal;
 
     if (remaining <= 0) {
@@ -292,7 +325,7 @@ export class VentasStoreService {
       return;
     }
 
-    const typeKey = type.toLowerCase() as 'efectivo' | 'qr' | 'tarjeta' | 'giftcard';
+    const typeKey = type.toLowerCase() as 'efectivo' | 'qr' | 'tarjeta';
 
     // Establecer directamente el restante (no sumar)
     this.paymentAmounts.update((payments) => ({
@@ -304,13 +337,23 @@ export class VentasStoreService {
 
   resetPayments() {
     const total = this.totalVenta() - this.descuento();
-    this.paymentAmounts.set({
-      efectivo: total,
-      qr: 0,
-      tarjeta: 0,
-      giftcard: 0,
-    });
-    this.splitActive.set(false);
+    if (this.tipoVenta() === 'CREDITO') {
+      this.paymentAmounts.set({
+        efectivo: 0,
+        qr: 0,
+        tarjeta: 0,
+      });
+      // Iniciamos en false para que no aparezca el botón "Resetear" hasta que se agregue un pago
+      // Al agregar un pago, setPayment lo pondrá en true
+      this.splitActive.set(false);
+    } else {
+      this.paymentAmounts.set({
+        efectivo: total,
+        qr: 0,
+        tarjeta: 0,
+      });
+      this.splitActive.set(false);
+    }
   }
 
   setDescuento(descuento: number, tipo: 'PROMOCION' | 'DESCUENTO' = 'DESCUENTO') {
@@ -329,8 +372,16 @@ export class VentasStoreService {
     this.resetPayments();
   }
 
-  setTipoVenta(tipo: 'LOCAL' | 'ENVIO') {
+  setTipoVenta(tipo: 'CONTADO' | 'CREDITO') {
     this.tipoVenta.set(tipo);
+    if (tipo === 'CONTADO') {
+      this.fechaLimite.set(null);
+    }
+    this.resetPayments();
+  }
+
+  setFechaLimite(fecha: string) {
+    this.fechaLimite.set(fecha);
   }
 
   /**
@@ -366,9 +417,8 @@ export class VentasStoreService {
 
   private getBranchName(id: number): string {
     const branches: Record<number, string> = {
-      1: 'Tarija',
-      2: 'Cochabamba',
-      3: 'Santa Cruz',
+      1: 'Central',
+      2: 'Secundaria',
     };
     return branches[id] || `Sucursal ${id}`;
   }
@@ -392,14 +442,23 @@ export class VentasStoreService {
         const sucursalNombre = this.getBranchName(venta.id_sucursal);
         this.sessionService.setSucursal(venta.id_sucursal, sucursalNombre);
 
-        this.tipoVenta.set(venta.tipo_venta as 'LOCAL' | 'ENVIO');
+        this.tipoVenta.set(venta.tipo_venta as 'CONTADO' | 'CREDITO');
+        
+        // Formatear fecha límite para input datetime-local (YYYY-MM-DDTHH:mm)
+        if (venta.fecha_limite) {
+          // Si viene formato completo ISO o con segundos, tomamos solo hasta minutos
+          const formattedDate = venta.fecha_limite.substring(0, 16);
+          this.fechaLimite.set(formattedDate);
+        } else {
+          this.fechaLimite.set(null);
+        }
+
         this.descuento.set(venta.descuento ?? 0);
         this.tipoDescuento.set(venta.tipo_descuento ?? 'SIN DESCUENTO');
         this.paymentAmounts.set({
           efectivo: venta.monto_efectivo,
           qr: venta.monto_qr,
           tarjeta: venta.monto_tarjeta,
-          giftcard: venta.monto_giftcard,
         });
 
         // Detectar si hay split activo y establecer método de pago
@@ -407,7 +466,6 @@ export class VentasStoreService {
           venta.monto_efectivo > 0 ? 'EFECTIVO' : null,
           venta.monto_qr > 0 ? 'QR' : null,
           venta.monto_tarjeta > 0 ? 'TARJETA' : null,
-          venta.monto_giftcard > 0 ? 'GIFTCARD' : null,
         ].filter((m) => m !== null);
 
         const hasSplit = activeMethods.length > 1;

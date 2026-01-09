@@ -47,42 +47,54 @@ import { take } from 'rxjs/operators';
           <button
             type="button"
             class="flex items-center justify-center gap-1.5 py-1.5 rounded-md text-[10px] font-bold tracking-wider transition-all"
-            [class.bg-white]="tipoVenta() === 'LOCAL'"
-            [class.text-black]="tipoVenta() === 'LOCAL'"
-            [class.shadow-sm]="tipoVenta() === 'LOCAL'"
-            [class.text-gray-500]="tipoVenta() !== 'LOCAL'"
-            (click)="onSelectTipoVenta('LOCAL')"
+            [class.bg-white]="tipoVenta() === 'CONTADO'"
+            [class.text-black]="tipoVenta() === 'CONTADO'"
+            [class.shadow-sm]="tipoVenta() === 'CONTADO'"
+            [class.text-gray-500]="tipoVenta() !== 'CONTADO'"
+            (click)="onSelectTipoVenta('CONTADO')"
           >
             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
                 stroke-width="2"
-                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
               ></path>
             </svg>
-            LOCAL
+            CONTADO
           </button>
           <button
             type="button"
             class="flex items-center justify-center gap-1.5 py-1.5 rounded-md text-[10px] font-bold tracking-wider transition-all"
-            [class.bg-white]="tipoVenta() === 'ENVIO'"
-            [class.text-black]="tipoVenta() === 'ENVIO'"
-            [class.shadow-sm]="tipoVenta() === 'ENVIO'"
-            [class.text-gray-500]="tipoVenta() !== 'ENVIO'"
-            (click)="onSelectTipoVenta('ENVIO')"
+            [class.bg-white]="tipoVenta() === 'CREDITO'"
+            [class.text-black]="tipoVenta() === 'CREDITO'"
+            [class.shadow-sm]="tipoVenta() === 'CREDITO'"
+            [class.text-gray-500]="tipoVenta() !== 'CREDITO'"
+            (click)="onSelectTipoVenta('CREDITO')"
           >
             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
                 stroke-width="2"
-                d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
+                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
               ></path>
             </svg>
-            ENVÍO
+            CREDITO
           </button>
         </div>
+
+        @if (tipoVenta() === 'CREDITO') {
+        <div class="mt-2">
+          <label class="block text-[10px] font-bold text-gray-500 mb-1 tracking-wider">FECHA LÍMITE</label>
+          <input
+            type="datetime-local"
+            class="w-full px-2 py-1.5 text-xs border border-gray-300 rounded focus:border-black outline-none"
+            [ngModel]="fechaLimite()"
+            (ngModelChange)="onFechaLimiteChange($event)"
+          />
+        </div>
+        }
       </div>
 
       <!-- Cart Items List -->
@@ -184,13 +196,26 @@ import { take } from 'rxjs/operators';
               >Bs. {{ totalConDescuento().toFixed(2) }}</span
             >
           </div>
+
+          @if (tipoVenta() === 'CREDITO') {
+          <div
+            class="flex items-center justify-between text-xs pt-1 border-t border-gray-100 mt-1"
+          >
+            <span class="text-gray-500">Pagado</span>
+            <span class="font-medium">Bs. {{ totalPagado().toFixed(2) }}</span>
+          </div>
+          <div class="flex items-center justify-between text-xs font-bold text-red-600">
+            <span>Saldo Pendiente</span>
+            <span>Bs. {{ saldoPendiente().toFixed(2) }}</span>
+          </div>
+          }
         </div>
 
         <!-- Methods & Action -->
         <div class="space-y-3">
-          <!-- Payment Methods Grid (4 cols) -->
-          <div class="grid grid-cols-4 gap-2">
-            @for (method of ['EFECTIVO', 'QR', 'TARJETA', 'GIFTCARD']; track method) {
+          <!-- Payment Methods Grid (3 cols) -->
+          <div class="grid grid-cols-3 gap-2">
+            @for (method of ['EFECTIVO', 'QR', 'TARJETA']; track method) {
             <button
               type="button"
               class="relative px-1 py-2 border text-[9px] font-bold tracking-wider transition-all rounded hover:border-black flex flex-col items-center justify-center gap-0.5"
@@ -333,14 +358,6 @@ import { take } from 'rxjs/operators';
             >
               TARJETA
             </button>
-            } @if (firstPaymentMethod() !== 'GIFTCARD') {
-            <button
-              type="button"
-              class="px-4 py-3 border border-gray-300 text-sm font-semibold tracking-wider hover:bg-black hover:text-white hover:border-black transition-colors"
-              (click)="onSecondPaymentMethodSelected('GIFTCARD')"
-            >
-              GIFTCARD
-            </button>
             }
           </div>
         </div>
@@ -361,13 +378,14 @@ export class CartSummaryComponent {
   splitActive = this.ventasStore.splitActive;
   selectedPaymentMethod = this.ventasStore.selectedPaymentMethod;
   tipoVenta = this.ventasStore.tipoVenta;
+  fechaLimite = this.ventasStore.fechaLimite;
   processing = this.ventasStore.processing; // Usar el signal del store
   descuento = this.ventasStore.descuento;
 
   showPaymentModal = signal<boolean>(false);
   showDescuentoModal = signal<boolean>(false);
   showSecondPaymentModal = signal<boolean>(false);
-  firstPaymentMethod = signal<'EFECTIVO' | 'QR' | 'TARJETA' | 'GIFTCARD' | ''>('');
+  firstPaymentMethod = signal<'EFECTIVO' | 'QR' | 'TARJETA' | ''>('');
   firstPaymentAmount = signal<number>(0);
 
   // Computed para el total después de descuento
@@ -375,11 +393,19 @@ export class CartSummaryComponent {
     return Math.max(0, this.total() - this.descuento());
   });
 
+  // Computed properties for UI
+  totalPagado = computed(() => {
+    const payments = this.paymentAmounts();
+    return payments.efectivo + payments.qr + payments.tarjeta;
+  });
+
+  saldoPendiente = computed(() => {
+    return Math.max(0, this.totalConDescuento() - this.totalPagado());
+  });
+
   // Computed para verificar si el pago está completo
   pagoCompleto = computed(() => {
-    const payments = this.paymentAmounts();
-    const totalPagado = payments.efectivo + payments.qr + payments.tarjeta + payments.giftcard;
-    return totalPagado === this.totalConDescuento();
+    return Math.abs(this.totalPagado() - this.totalConDescuento()) < 0.01;
   });
 
   // Computed para contar métodos activos
@@ -389,7 +415,6 @@ export class CartSummaryComponent {
       payments.efectivo > 0 ? 1 : 0,
       payments.qr > 0 ? 1 : 0,
       payments.tarjeta > 0 ? 1 : 0,
-      payments.giftcard > 0 ? 1 : 0,
     ].reduce((a, b) => a + b, 0);
   });
 
@@ -427,7 +452,7 @@ export class CartSummaryComponent {
 
         // Si hay total y no hay pagos asignados, inicializar
         const payments = this.paymentAmounts();
-        const totalPagado = payments.efectivo + payments.qr + payments.tarjeta + payments.giftcard;
+        const totalPagado = payments.efectivo + payments.qr + payments.tarjeta;
         // No inicializar si hay modales abiertos (usuario está configurando pagos)
         if (
           total > 0 &&
@@ -453,7 +478,7 @@ export class CartSummaryComponent {
 
   getPaymentAmount(method: string): number {
     const amounts = this.paymentAmounts();
-    const key = method.toLowerCase() as 'efectivo' | 'qr' | 'tarjeta' | 'giftcard';
+    const key = method.toLowerCase() as 'efectivo' | 'qr' | 'tarjeta';
     return amounts[key] || 0;
   }
 
@@ -462,7 +487,7 @@ export class CartSummaryComponent {
     const activeCount = this.cantidadMetodosActivos();
 
     // Si ya hay 2 métodos activos y este no es uno de ellos, mostrar advertencia
-    const methodKey = method.toLowerCase() as 'efectivo' | 'qr' | 'tarjeta' | 'giftcard';
+    const methodKey = method.toLowerCase() as 'efectivo' | 'qr' | 'tarjeta';
     if (activeCount >= 2 && currentPayments[methodKey] === 0) {
       inject(ToastService).warning(
         'Solo se permiten 2 métodos de pago. Resetea los pagos primero.'
@@ -470,7 +495,7 @@ export class CartSummaryComponent {
       return;
     }
 
-    this.selectedPaymentMethod.set(method as 'EFECTIVO' | 'QR' | 'TARJETA' | 'GIFTCARD');
+    this.selectedPaymentMethod.set(method as 'EFECTIVO' | 'QR' | 'TARJETA');
     this.showPaymentModal.set(true);
   }
 
@@ -488,7 +513,7 @@ export class CartSummaryComponent {
   }
 
   onPaymentConfirmed(amount: number) {
-    const method = this.selectedPaymentMethod() as 'EFECTIVO' | 'QR' | 'TARJETA' | 'GIFTCARD';
+    const method = this.selectedPaymentMethod() as 'EFECTIVO' | 'QR' | 'TARJETA';
     const total = this.totalConDescuento();
 
     // Si el monto es igual al total, pago completo con un solo método
@@ -500,6 +525,13 @@ export class CartSummaryComponent {
 
     // Si el monto es menor, guardar temporalmente y pedir el segundo método
     if (amount < total) {
+      // Si es CREDITO, permitimos pago parcial sin pedir 2do metodo obligatoriamente
+      if (this.tipoVenta() === 'CREDITO') {
+         this.ventasStore.setPayment(method, amount);
+         this.showPaymentModal.set(false);
+         return;
+      }
+      
       this.firstPaymentMethod.set(method);
       this.firstPaymentAmount.set(amount);
       this.showPaymentModal.set(false);
@@ -508,7 +540,7 @@ export class CartSummaryComponent {
     }
   }
 
-  onSecondPaymentMethodSelected(method: 'EFECTIVO' | 'QR' | 'TARJETA' | 'GIFTCARD') {
+  onSecondPaymentMethodSelected(method: 'EFECTIVO' | 'QR' | 'TARJETA') {
     const total = this.totalConDescuento();
     const firstMethod = this.firstPaymentMethod();
     const firstAmount = this.firstPaymentAmount();
@@ -520,12 +552,11 @@ export class CartSummaryComponent {
         efectivo: 0,
         qr: 0,
         tarjeta: 0,
-        giftcard: 0,
       });
 
       // Aplicar ambos pagos
-      const firstKey = firstMethod.toLowerCase() as 'efectivo' | 'qr' | 'tarjeta' | 'giftcard';
-      const secondKey = method.toLowerCase() as 'efectivo' | 'qr' | 'tarjeta' | 'giftcard';
+      const firstKey = firstMethod.toLowerCase() as 'efectivo' | 'qr' | 'tarjeta';
+      const secondKey = method.toLowerCase() as 'efectivo' | 'qr' | 'tarjeta';
 
       this.ventasStore.paymentAmounts.update((payments) => ({
         ...payments,
@@ -575,8 +606,12 @@ export class CartSummaryComponent {
     }
   }
 
-  onSelectTipoVenta(tipo: 'LOCAL' | 'ENVIO') {
+  onSelectTipoVenta(tipo: 'CONTADO' | 'CREDITO') {
     this.ventasStore.setTipoVenta(tipo);
+  }
+
+  onFechaLimiteChange(fecha: string) {
+    this.ventasStore.setFechaLimite(fecha);
   }
 
   onConfirmSale() {
@@ -586,11 +621,19 @@ export class CartSummaryComponent {
 
     if (this.processing()) return;
 
-    const payload = this.ventasStore.ventaPayload();
-
-    if (payload.detalle_venta.length === 0) {
+    if (this.cartItems().length === 0) {
       inject(ToastService).warning('El carrito está vacío');
       return;
+    }
+
+    if (this.tipoVenta() === 'CREDITO' && !this.fechaLimite()) {
+       inject(ToastService).warning('Debe seleccionar una fecha límite para venta a CRÉDITO');
+       return;
+    }
+
+    if (this.tipoVenta() === 'CONTADO' && !this.pagoCompleto()) {
+       inject(ToastService).warning('El pago debe ser completo para venta al CONTADO');
+       return;
     }
 
     // El store maneja el estado de processing internamente

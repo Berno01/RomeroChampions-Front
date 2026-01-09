@@ -40,9 +40,8 @@ import { Drop } from '../../../../core/models/drops.models';
                 (ngModelChange)="onBranchChange($event)"
               >
                 <option [value]="null">Todas</option>
-                <option [value]="1">Tarija</option>
-                <option [value]="2">Cochabamba</option>
-                <option [value]="3">Santa Cruz</option>
+                <option [value]="1">Central</option>
+                <option [value]="2">Secundaria</option>
               </select>
             </div>
             }
@@ -531,9 +530,8 @@ export class DropsListComponent {
 
   getBranchName(idSucursal: number): string {
     const branches: { [key: number]: string } = {
-      1: 'Tarija',
-      2: 'Cochabamba',
-      3: 'Santa Cruz',
+      1: 'Central',
+      2: 'Secundaria',
     };
     return branches[idSucursal] || 'Desconocida';
   }

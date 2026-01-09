@@ -14,7 +14,9 @@ export interface CreateModeloPayloadDTO {
   precio: number;
   idMarca: number;
   idCategoria: number;
-  idCorte: number;
+  idEstilo: number;
+  idGenero: number;
+  codigo: string;
   colores: Array<{
     idColor: number;
     fotoUrl: string;
@@ -27,7 +29,9 @@ export interface FormDraftState {
   precio: number;
   idMarca: number | null;
   idCategoria: number | null;
-  idCorte: number | null;
+  idEstilo: number | null;
+  idGenero: number | null;
+  codigo: string;
   idsTallasSelected: number[];
   coloresDraft: ColorDraftDTO[];
   activeColorIdForUpload: number | null;

@@ -288,9 +288,8 @@ export class DropsStoreService {
 
   private getBranchName(id: number): string {
     const branches: Record<number, string> = {
-      1: 'Tarija',
-      2: 'Cochabamba',
-      3: 'Santa Cruz',
+      1: 'Central',
+      2: 'Secundaria',
     };
     return branches[id] || `Sucursal ${id}`;
   }
