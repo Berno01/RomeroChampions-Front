@@ -716,7 +716,9 @@ export class NuevoModeloModalComponent {
 
   // Mini-modal state
   showMiniModal = signal<boolean>(false);
-  miniModalType = signal<'marca' | 'categoria' | 'estilo' | 'genero' | 'talla' | 'color' | null>(null);
+  miniModalType = signal<'marca' | 'categoria' | 'estilo' | 'genero' | 'talla' | 'color' | null>(
+    null
+  );
   miniModalMode = signal<'create' | 'edit'>('create');
   miniModalId = signal<number | null>(null);
   miniModalTitle = signal<string>('');

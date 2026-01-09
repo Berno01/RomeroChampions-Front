@@ -32,9 +32,7 @@ export class VentasStoreService {
     tarjeta: 0,
   });
   readonly splitActive = signal<boolean>(false);
-  readonly selectedPaymentMethod = signal<'EFECTIVO' | 'QR' | 'TARJETA' | ''>(
-    'EFECTIVO'
-  );
+  readonly selectedPaymentMethod = signal<'EFECTIVO' | 'QR' | 'TARJETA' | ''>('EFECTIVO');
   readonly descuento = signal<number>(0);
   readonly tipoDescuento = signal<'SIN DESCUENTO' | 'PROMOCION' | 'DESCUENTO'>('SIN DESCUENTO');
   readonly tipoVenta = signal<'CONTADO' | 'CREDITO'>('CONTADO');
@@ -225,19 +223,24 @@ export class VentasStoreService {
     if (isCredito) {
       // Si ya hay 2 métodos activos y estamos intentando agregar un tercero (amount > 0), bloquear
       // Si amount es 0 o undefined, asumimos que se quiere poner a 0, lo cual siempre se permite
-      if (activePayments.length >= 2 && (!currentPayments[typeKey] || currentPayments[typeKey] === 0) && amount && amount > 0) {
+      if (
+        activePayments.length >= 2 &&
+        (!currentPayments[typeKey] || currentPayments[typeKey] === 0) &&
+        amount &&
+        amount > 0
+      ) {
         console.warn('Solo se permiten combinaciones de hasta 2 métodos de pago');
         return;
       }
 
       const newAmount = amount !== undefined && amount >= 0 ? amount : 0;
-      
+
       // Actualizar solo este método
       this.paymentAmounts.update((prev) => ({
         ...prev,
         [typeKey]: newAmount,
       }));
-      
+
       this.splitActive.set(true);
       return;
     }
@@ -245,10 +248,14 @@ export class VentasStoreService {
     // --- LÓGICA CONTADO (Original) ---
 
     // Si el tipo seleccionado ya está activo, resetear todo a ese método (Toggle behavior para single payment)
-    if (currentPayments[typeKey] > 0 && activePayments.length === 0 && (!amount || amount === total)) {
-       // Si era el único pago y se clickea de nuevo sin monto específico, no hacer nada o resetear?
-       // El comportamiento original reseteaba a TOTAL. Mantengamos eso para clicks simples.
-       // Pero si viene con amount específico (del modal), debemos respetarlo.
+    if (
+      currentPayments[typeKey] > 0 &&
+      activePayments.length === 0 &&
+      (!amount || amount === total)
+    ) {
+      // Si era el único pago y se clickea de nuevo sin monto específico, no hacer nada o resetear?
+      // El comportamiento original reseteaba a TOTAL. Mantengamos eso para clicks simples.
+      // Pero si viene con amount específico (del modal), debemos respetarlo.
     }
 
     // Si el tipo seleccionado ya está activo y no es split, resetear todo a ese método
@@ -314,10 +321,7 @@ export class VentasStoreService {
   setRemainingPayment(type: 'EFECTIVO' | 'QR' | 'TARJETA') {
     const total = this.totalVenta() - this.descuento();
     const currentPayments = this.paymentAmounts();
-    const currentTotal =
-      currentPayments.efectivo +
-      currentPayments.qr +
-      currentPayments.tarjeta;
+    const currentTotal = currentPayments.efectivo + currentPayments.qr + currentPayments.tarjeta;
     const remaining = total - currentTotal;
 
     if (remaining <= 0) {
@@ -443,7 +447,7 @@ export class VentasStoreService {
         this.sessionService.setSucursal(venta.id_sucursal, sucursalNombre);
 
         this.tipoVenta.set(venta.tipo_venta as 'CONTADO' | 'CREDITO');
-        
+
         // Formatear fecha límite para input datetime-local (YYYY-MM-DDTHH:mm)
         if (venta.fecha_limite) {
           // Si viene formato completo ISO o con segundos, tomamos solo hasta minutos

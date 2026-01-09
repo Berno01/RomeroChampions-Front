@@ -309,7 +309,9 @@ export class InventarioListComponent implements OnInit {
 
   // Computed
   categoriasDisponibles = computed(() => {
-    const cats = this.inventario().map((i) => i.categoria).filter((c) => !!c);
+    const cats = this.inventario()
+      .map((i) => i.categoria)
+      .filter((c) => !!c);
     const uniqueCats = Array.from(new Set(cats)).sort();
     return ['Todas', ...uniqueCats];
   });

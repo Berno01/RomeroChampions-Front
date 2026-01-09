@@ -86,7 +86,9 @@ import { take } from 'rxjs/operators';
 
         @if (tipoVenta() === 'CREDITO') {
         <div class="mt-2">
-          <label class="block text-[10px] font-bold text-gray-500 mb-1 tracking-wider">FECHA LÍMITE</label>
+          <label class="block text-[10px] font-bold text-gray-500 mb-1 tracking-wider"
+            >FECHA LÍMITE</label
+          >
           <input
             type="datetime-local"
             class="w-full px-2 py-1.5 text-xs border border-gray-300 rounded focus:border-black outline-none"
@@ -198,9 +200,7 @@ import { take } from 'rxjs/operators';
           </div>
 
           @if (tipoVenta() === 'CREDITO') {
-          <div
-            class="flex items-center justify-between text-xs pt-1 border-t border-gray-100 mt-1"
-          >
+          <div class="flex items-center justify-between text-xs pt-1 border-t border-gray-100 mt-1">
             <span class="text-gray-500">Pagado</span>
             <span class="font-medium">Bs. {{ totalPagado().toFixed(2) }}</span>
           </div>
@@ -527,11 +527,11 @@ export class CartSummaryComponent {
     if (amount < total) {
       // Si es CREDITO, permitimos pago parcial sin pedir 2do metodo obligatoriamente
       if (this.tipoVenta() === 'CREDITO') {
-         this.ventasStore.setPayment(method, amount);
-         this.showPaymentModal.set(false);
-         return;
+        this.ventasStore.setPayment(method, amount);
+        this.showPaymentModal.set(false);
+        return;
       }
-      
+
       this.firstPaymentMethod.set(method);
       this.firstPaymentAmount.set(amount);
       this.showPaymentModal.set(false);
@@ -627,13 +627,13 @@ export class CartSummaryComponent {
     }
 
     if (this.tipoVenta() === 'CREDITO' && !this.fechaLimite()) {
-       inject(ToastService).warning('Debe seleccionar una fecha límite para venta a CRÉDITO');
-       return;
+      inject(ToastService).warning('Debe seleccionar una fecha límite para venta a CRÉDITO');
+      return;
     }
 
     if (this.tipoVenta() === 'CONTADO' && !this.pagoCompleto()) {
-       inject(ToastService).warning('El pago debe ser completo para venta al CONTADO');
-       return;
+      inject(ToastService).warning('El pago debe ser completo para venta al CONTADO');
+      return;
     }
 
     // El store maneja el estado de processing internamente

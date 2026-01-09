@@ -253,9 +253,7 @@ import { VentaDTO } from '../../../../core/models/venta.models';
                 <td class="px-6 py-4 text-sm text-gray-900 text-right">
                   @if (sale.descuento && sale.descuento > 0) {
                   <div class="flex flex-col items-end gap-0.5">
-                    <span class="font-medium">{{
-                      sale.descuento.toFixed(2)
-                    }}</span>
+                    <span class="font-medium">{{ sale.descuento.toFixed(2) }}</span>
                     <span
                       class="text-xs px-1.5 py-0.5 rounded"
                       [class.bg-blue-100]="sale.tipo_descuento === 'DESCUENTO'"
@@ -604,7 +602,7 @@ export class SalesListComponent {
     // El original filtraba 'ENVIO' para no sumar? "Filtrar solo ventas tipo LOCAL para los totales"
     // Ahora 'CONTADO' y 'CREDITO' suman? Supongo que sí.
     // Asumiremos que ambas suman lo pagado.
-    
+
     return {
       efectivo: salesList.reduce((sum, sale) => sum + (sale.monto_efectivo || 0), 0),
       qr: salesList.reduce((sum, sale) => sum + (sale.monto_qr || 0), 0),
