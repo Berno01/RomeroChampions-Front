@@ -20,6 +20,14 @@ export const routes: Routes = [
       import('./features/usuarios/usuarios.component').then((m) => m.UsuariosComponent),
   },
   {
+    path: 'creditos',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/creditos/layout/creditos-layout.component').then(
+        (m) => m.CreditosLayoutComponent
+      ),
+  },
+  {
     path: '',
     redirectTo: 'ventas',
     pathMatch: 'full',
