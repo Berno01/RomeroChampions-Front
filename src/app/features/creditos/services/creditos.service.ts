@@ -41,10 +41,9 @@ export class CreditosService {
 
   getDeudasCliente(idCliente: number): Observable<DeudaVentaDTO[]> {
     const headers = { 'X-Usuario-Id': this.sessionService.userId().toString() };
-    return this.http.get<DeudaVentaDTO[]>(
-      `${this.apiUrl}/deudas/cliente/${idCliente}`,
-      { headers }
-    );
+    return this.http.get<DeudaVentaDTO[]>(`${this.apiUrl}/deudas/cliente/${idCliente}`, {
+      headers,
+    });
   }
 
   createPago(data: CreatePagoDTO): Observable<any> {

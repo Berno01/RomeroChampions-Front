@@ -103,7 +103,9 @@ import { NuevoPagoModalComponent } from '../components/nuevo-pago-modal/nuevo-pa
       <!-- Tabla Content -->
       <div class="flex-1 overflow-auto p-4 md:p-6">
         <!-- Desktop Table -->
-        <div class="hidden md:block bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <div
+          class="hidden md:block bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden"
+        >
           <table class="w-full text-left border-collapse">
             <thead>
               <tr
@@ -273,10 +275,20 @@ import { NuevoPagoModalComponent } from '../components/nuevo-pago-modal/nuevo-pa
 
             <!-- Cliente -->
             <div class="flex items-center gap-2 mb-3 pb-3 border-b border-gray-100">
-               <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-               </svg>
-               <span class="text-sm text-gray-700 font-medium">{{ pago.nombre_cliente }}</span>
+              <svg
+                class="w-4 h-4 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                ></path>
+              </svg>
+              <span class="text-sm text-gray-700 font-medium">{{ pago.nombre_cliente }}</span>
             </div>
 
             <!-- Grid -->
@@ -300,54 +312,66 @@ import { NuevoPagoModalComponent } from '../components/nuevo-pago-modal/nuevo-pa
             <!-- Footer info -->
             <div class="bg-gray-50 rounded p-3 text-xs space-y-2">
               <div class="flex justify-between items-center">
-                  <span class="text-gray-600 font-medium uppercase tracking-wide">Monto Pagado</span>
-                  <span class="text-base font-bold text-gray-900">Bs. {{ pago.monto_pago | number:'1.2-2' }}</span>
+                <span class="text-gray-600 font-medium uppercase tracking-wide">Monto Pagado</span>
+                <span class="text-base font-bold text-gray-900"
+                  >Bs. {{ pago.monto_pago | number : '1.2-2' }}</span
+                >
               </div>
-              
+
               <div class="flex justify-between items-center pt-2 border-t border-gray-200">
-                  <span class="text-gray-500">Saldo Restante Venta</span>
-                  <span
-                    class="px-2 py-0.5 rounded-full font-bold"
-                    [class.text-red-600]="pago.saldo_actual_venta > 0"
-                    [class.bg-red-50]="pago.saldo_actual_venta > 0"
-                    [class.text-green-600]="pago.saldo_actual_venta <= 0"
-                    [class.bg-green-50]="pago.saldo_actual_venta <= 0"
-                  >
-                    {{
-                      pago.saldo_actual_venta > 0
-                        ? 'Bs. ' + (pago.saldo_actual_venta | number : '1.2-2')
-                        : 'CUBIERTO'
-                    }}
-                  </span>
+                <span class="text-gray-500">Saldo Restante Venta</span>
+                <span
+                  class="px-2 py-0.5 rounded-full font-bold"
+                  [class.text-red-600]="pago.saldo_actual_venta > 0"
+                  [class.bg-red-50]="pago.saldo_actual_venta > 0"
+                  [class.text-green-600]="pago.saldo_actual_venta <= 0"
+                  [class.bg-green-50]="pago.saldo_actual_venta <= 0"
+                >
+                  {{
+                    pago.saldo_actual_venta > 0
+                      ? 'Bs. ' + (pago.saldo_actual_venta | number : '1.2-2')
+                      : 'CUBIERTO'
+                  }}
+                </span>
               </div>
             </div>
 
             <!-- Actions -->
             <div class="flex items-center justify-end gap-3 mt-3 pt-2 border-t border-gray-100">
-              <button 
+              <button
                 class="flex items-center gap-1 text-xs font-medium text-gray-500 hover:text-black py-1 px-2"
                 (click)="onEdit(pago); $event.stopPropagation()"
               >
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                  />
                 </svg>
                 Editar
               </button>
-              <button 
+              <button
                 class="flex items-center gap-1 text-xs font-medium text-red-500 hover:text-red-700 py-1 px-2"
                 (click)="onDelete(pago); $event.stopPropagation()"
               >
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                  />
                 </svg>
                 Eliminar
               </button>
             </div>
           </div>
           } @empty {
-             <div class="text-center py-10 bg-white rounded-lg border border-dashed border-gray-300">
-                <p class="text-gray-500 text-sm">No hay pagos registrados.</p>
-             </div>
+          <div class="text-center py-10 bg-white rounded-lg border border-dashed border-gray-300">
+            <p class="text-gray-500 text-sm">No hay pagos registrados.</p>
+          </div>
           }
         </div>
       </div>
@@ -364,10 +388,10 @@ import { NuevoPagoModalComponent } from '../components/nuevo-pago-modal/nuevo-pa
 
     <!-- Modal Nuevo Pago (Wizard) -->
     @if (showNewPagoModal()) {
-      <app-nuevo-pago-modal
-        (close)="showNewPagoModal.set(false)"
-        (pagoCreated)="onPagoCreated()"
-      ></app-nuevo-pago-modal>
+    <app-nuevo-pago-modal
+      (close)="showNewPagoModal.set(false)"
+      (pagoCreated)="onPagoCreated()"
+    ></app-nuevo-pago-modal>
     }
   `,
 })

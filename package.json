@@ -1,5 +1,5 @@
 {
-  "name": "dunno",
+  "name": "romerochampions",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
@@ -7,7 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "serve:ssr:dunno": "node dist/dunno/server/server.mjs"
+    "serve:ssr:romerochampions": "node dist/romerochampions/server/server.mjs"
   },
   "prettier": {
     "printWidth": 100,

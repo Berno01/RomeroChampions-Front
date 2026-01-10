@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "dunno": {
+    "romerochampions": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -67,10 +67,10 @@
           },
           "configurations": {
             "production": {
-              "buildTarget": "dunno:build:production"
+              "buildTarget": "romerochampions:build:production"
             },
             "development": {
-              "buildTarget": "dunno:build:development"
+              "buildTarget": "romerochampions:build:development"
             }
           },
           "defaultConfiguration": "development"
