@@ -294,7 +294,7 @@ import { AuthService } from '../../core/services/auth.service';
           @if (isAdmin()) {
           <a
             routerLink="/drops"
-            routerLinkActive="bg-black text-white"
+            routerLinkActive="bg-primary text-white"
             [routerLinkActiveOptions]="{ exact: false }"
             class="flex items-center gap-2 px-4 py-2.5 rounded-md font-medium text-sm transition-colors text-gray-700 hover:bg-gray-100"
           >

@@ -78,20 +78,20 @@
                   class="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-50 text-sm text-gray-700 font-medium flex justify-between items-center group"
                 >
                   <span>Hoy</span>
-                  @if(selectedRange() === 'hoy') { <span class="text-black">✓</span> }
+                  @if(selectedRange() === 'hoy') { <span class="text-primary">✓</span> }
                 </button>
                 <button
                   (click)="selectQuickRange('7dias')"
                   class="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-50 text-sm text-gray-700 font-medium flex justify-between items-center group"
                 >
                   <span>Últimos 7 días</span>
-                  @if(selectedRange() === '7dias') { <span class="text-black">✓</span> }
+                  @if(selectedRange() === '7dias') { <span class="text-primary">✓</span> }
                 </button>
                 <button
                   (click)="selectQuickRange('mes')"
                   class="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-50 text-sm text-gray-700 font-medium flex justify-between items-center group"
                 >
-                  Este Mes @if(selectedRange() === 'mes') { <span class="text-black">✓</span> }
+                  Este Mes @if(selectedRange() === 'mes') { <span class="text-primary">✓</span> }
                 </button>
               </div>
 
@@ -106,7 +106,7 @@
                     type="date"
                     [ngModel]="selectedDate()"
                     (ngModelChange)="selectedDate.set($event)"
-                    class="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-black focus:border-transparent outline-none"
+                    class="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
                   />
                 </div>
                 } @else {
@@ -117,7 +117,7 @@
                       type="date"
                       [ngModel]="customStartDate()"
                       (ngModelChange)="customStartDate.set($event)"
-                      class="w-full text-xs border border-gray-300 rounded-lg px-2 py-2 focus:ring-2 focus:ring-black focus:border-transparent outline-none"
+                      class="w-full text-xs border border-gray-300 rounded-lg px-2 py-2 focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
                     />
                   </div>
                   <div>
@@ -126,7 +126,7 @@
                       type="date"
                       [ngModel]="customEndDate()"
                       (ngModelChange)="customEndDate.set($event)"
-                      class="w-full text-xs border border-gray-300 rounded-lg px-2 py-2 focus:ring-2 focus:ring-black focus:border-transparent outline-none"
+                      class="w-full text-xs border border-gray-300 rounded-lg px-2 py-2 focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
                     />
                   </div>
                 </div>
@@ -134,7 +134,7 @@
 
                 <button
                   (click)="applyCustomDate()"
-                  class="w-full bg-black text-white text-sm font-medium py-2.5 rounded-lg hover:bg-gray-800 transition-colors shadow-lg shadow-gray-200"
+                  class="w-full bg-primary text-white text-sm font-medium py-2.5 rounded-lg hover:opacity-90 transition-colors shadow-lg shadow-gray-200"
                 >
                   Aplicar Filtro
                 </button>
@@ -191,7 +191,7 @@
           @if (selectedVendedorId()) {
           <button
             (click)="selectedVendedorId.set(null); loadData()"
-            class="w-full mb-4 text-xs text-gray-600 hover:text-black font-medium py-2 px-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors flex items-center justify-center gap-2"
+            class="w-full mb-4 text-xs text-gray-600 hover:text-primary font-medium py-2 px-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors flex items-center justify-center gap-2"
           >
             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -228,7 +228,7 @@
               <!-- Avatar -->
               <div class="relative">
                 <div
-                  class="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center font-bold text-xs shadow-md group-hover:scale-105 transition-transform"
+                  class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xs shadow-md group-hover:scale-105 transition-transform"
                 >
                   {{ getInitials(vendedor.nombre_completo) }}
                 </div>
@@ -381,7 +381,7 @@
                 </div>
                 <div class="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
                   <div
-                    class="bg-black h-full rounded-full transition-all duration-500"
+                    class="bg-primary h-full rounded-full transition-all duration-500"
                     [style.width.%]="item.porcentaje || 0"
                   ></div>
                 </div>
@@ -426,7 +426,7 @@
                 </div>
                 <div class="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
                   <div
-                    class="bg-black h-full rounded-full transition-all duration-500"
+                    class="bg-primary h-full rounded-full transition-all duration-500"
                     [style.width.%]="item.porcentaje || 0"
                   ></div>
                 </div>
@@ -516,7 +516,7 @@
                   class="w-full max-w-[30px] bg-gray-100 rounded-t-md relative h-32 flex items-end justify-center overflow-hidden"
                 >
                   <div
-                    class="w-full bg-black rounded-t-md transition-all duration-500 group-hover:bg-gray-800"
+                    class="w-full bg-primary rounded-t-md transition-all duration-500 group-hover:opacity-90"
                     [style.height.%]="item.porcentaje || 0"
                   ></div>
                 </div>

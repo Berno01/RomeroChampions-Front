@@ -49,7 +49,7 @@ import { CommonModule } from '@angular/common';
       <div class="absolute inset-0 bg-white/80 z-50 flex items-center justify-center">
         <div class="text-center">
           <div
-            class="h-12 w-12 border-4 border-gray-300 border-t-black rounded-full animate-spin mx-auto"
+            class="h-12 w-12 border-4 border-gray-300 border-t-primary rounded-full animate-spin mx-auto"
           ></div>
           <p class="mt-4 text-sm text-gray-600">Cargando...</p>
         </div>

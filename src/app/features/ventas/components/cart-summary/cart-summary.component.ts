@@ -218,10 +218,10 @@ import { take } from 'rxjs/operators';
             @for (method of ['EFECTIVO', 'QR', 'TARJETA']; track method) {
             <button
               type="button"
-              class="relative px-1 py-2 border text-[9px] font-bold tracking-wider transition-all rounded hover:border-black flex flex-col items-center justify-center gap-0.5"
-              [class.bg-black]="getPaymentAmount(method) > 0"
+              class="relative px-1 py-2 border text-[9px] font-bold tracking-wider transition-all rounded hover:border-primary flex flex-col items-center justify-center gap-0.5"
+              [class.bg-primary]="getPaymentAmount(method) > 0"
               [class.text-white]="getPaymentAmount(method) > 0"
-              [class.border-black]="getPaymentAmount(method) > 0"
+              [class.border-primary]="getPaymentAmount(method) > 0"
               [class.bg-white]="getPaymentAmount(method) === 0"
               [class.text-gray-600]="getPaymentAmount(method) === 0"
               [class.border-gray-200]="getPaymentAmount(method) === 0"
@@ -262,7 +262,7 @@ import { take } from 'rxjs/operators';
           <!-- Confirm Button -->
           <button
             type="button"
-            class="w-full px-4 py-3 bg-black text-white text-xs md:text-sm font-bold tracking-[0.15em] hover:bg-gray-800 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            class="w-full px-4 py-3 bg-primary text-white text-xs md:text-sm font-bold tracking-[0.15em] hover:opacity-90 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             [disabled]="processing()"
             (click)="onConfirmSale()"
           >
@@ -337,7 +337,7 @@ import { take } from 'rxjs/operators';
             @if (firstPaymentMethod() !== 'EFECTIVO') {
             <button
               type="button"
-              class="px-4 py-3 border border-gray-300 text-sm font-semibold tracking-wider hover:bg-black hover:text-white hover:border-black transition-colors"
+              class="px-4 py-3 border border-gray-300 text-sm font-semibold tracking-wider hover:bg-primary hover:text-white hover:border-primary transition-colors"
               (click)="onSecondPaymentMethodSelected('EFECTIVO')"
             >
               EFECTIVO
@@ -345,7 +345,7 @@ import { take } from 'rxjs/operators';
             } @if (firstPaymentMethod() !== 'QR') {
             <button
               type="button"
-              class="px-4 py-3 border border-gray-300 text-sm font-semibold tracking-wider hover:bg-black hover:text-white hover:border-black transition-colors"
+              class="px-4 py-3 border border-gray-300 text-sm font-semibold tracking-wider hover:bg-primary hover:text-white hover:border-primary transition-colors"
               (click)="onSecondPaymentMethodSelected('QR')"
             >
               QR
@@ -353,7 +353,7 @@ import { take } from 'rxjs/operators';
             } @if (firstPaymentMethod() !== 'TARJETA') {
             <button
               type="button"
-              class="px-4 py-3 border border-gray-300 text-sm font-semibold tracking-wider hover:bg-black hover:text-white hover:border-black transition-colors"
+              class="px-4 py-3 border border-gray-300 text-sm font-semibold tracking-wider hover:bg-primary hover:text-white hover:border-primary transition-colors"
               (click)="onSecondPaymentMethodSelected('TARJETA')"
             >
               TARJETA

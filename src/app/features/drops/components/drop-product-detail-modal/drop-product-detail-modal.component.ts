@@ -50,7 +50,7 @@ import { take } from 'rxjs/operators';
           @if (loading()) {
           <div class="h-96 w-full max-w-md flex items-center justify-center">
             <div
-              class="h-10 w-10 border-4 border-gray-300 border-t-black rounded-full animate-spin"
+              class="h-10 w-10 border-4 border-gray-300 border-t-primary rounded-full animate-spin"
             ></div>
           </div>
           } @else {

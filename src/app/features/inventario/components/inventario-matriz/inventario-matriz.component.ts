@@ -28,7 +28,7 @@ import { take } from 'rxjs/operators';
       @if (loading()) {
       <div class="flex items-center justify-center py-8">
         <div
-          class="h-6 w-6 border-2 border-gray-300 border-t-black rounded-full animate-spin"
+          class="h-6 w-6 border-2 border-gray-300 border-t-primary rounded-full animate-spin"
         ></div>
       </div>
       } @else if (detalle()) {
@@ -38,7 +38,7 @@ import { take } from 'rxjs/operators';
         <button
           type="button"
           class="px-3 py-1.5 text-xs font-semibold tracking-wider transition-colors whitespace-nowrap rounded-md"
-          [class.bg-black]="selectedSucursalId() === sucursal.id_sucursal"
+          [class.bg-primary]="selectedSucursalId() === sucursal.id_sucursal"
           [class.text-white]="selectedSucursalId() === sucursal.id_sucursal"
           [class.bg-white]="selectedSucursalId() !== sucursal.id_sucursal"
           [class.text-gray-600]="selectedSucursalId() !== sucursal.id_sucursal"

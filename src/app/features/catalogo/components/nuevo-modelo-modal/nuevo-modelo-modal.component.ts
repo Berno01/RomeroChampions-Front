@@ -58,7 +58,7 @@ import { ColorDraftDTO, FormDraftState } from '../../models/create-modelo.models
 
         @if (loading()) {
         <div class="w-full h-full flex flex-col items-center justify-center bg-white z-20">
-          <div class="h-12 w-12 border-4 border-gray-200 border-t-black rounded-full animate-spin mb-4"></div>
+          <div class="h-12 w-12 border-4 border-gray-200 border-t-primary rounded-full animate-spin mb-4"></div>
           <p class="text-gray-500 font-medium tracking-wider text-sm">CARGANDO MODELO...</p>
         </div>
         } @else {
@@ -293,7 +293,7 @@ import { ColorDraftDTO, FormDraftState } from '../../models/create-modelo.models
                   <button
                     type="button"
                     class="px-6 py-2 text-xs font-bold tracking-wider transition-all"
-                    [class.bg-black]="formDraft().idEstilo === estilo.id"
+                    [class.bg-primary]="formDraft().idEstilo === estilo.id"
                     [class.text-white]="formDraft().idEstilo === estilo.id"
                     [class.bg-white]="formDraft().idEstilo !== estilo.id"
                     [class.text-black]="formDraft().idEstilo !== estilo.id"
@@ -317,7 +317,7 @@ import { ColorDraftDTO, FormDraftState } from '../../models/create-modelo.models
                 <!-- Botón + para crear nuevo estilo -->
                 <button
                   type="button"
-                  class="w-12 h-12 border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-400 hover:border-black hover:text-black transition-all"
+                  class="w-12 h-12 border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-400 hover:border-primary hover:text-primary transition-all"
                   (click)="openMiniModalEstilo()"
                   title="Crear nuevo estilo"
                 >
@@ -430,7 +430,7 @@ import { ColorDraftDTO, FormDraftState } from '../../models/create-modelo.models
                   <button
                     type="button"
                     class="w-12 h-12 text-sm font-bold transition-all"
-                    [class.bg-black]="isTallaSelected(talla.id)"
+                    [class.bg-primary]="isTallaSelected(talla.id)"
                     [class.text-white]="isTallaSelected(talla.id)"
                     [class.bg-white]="!isTallaSelected(talla.id)"
                     [class.text-black]="!isTallaSelected(talla.id)"
@@ -481,7 +481,7 @@ import { ColorDraftDTO, FormDraftState } from '../../models/create-modelo.models
             </button>
             <button
               type="button"
-              class="px-8 py-3 bg-black text-white text-sm font-bold tracking-wider hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              class="px-8 py-3 bg-primary text-white text-sm font-bold tracking-wider hover:opacity-90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               [disabled]="!isFormValid() || saving()"
               (click)="onSave()"
             >

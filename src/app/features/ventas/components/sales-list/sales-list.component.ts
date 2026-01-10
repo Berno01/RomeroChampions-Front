@@ -120,7 +120,7 @@ import { VentaDTO } from '../../../../core/models/venta.models';
               <!-- Botón Nueva Venta -->
               <button
                 type="button"
-                class="px-4 md:px-6 py-2 bg-black text-white text-xs font-semibold tracking-[0.15em] md:tracking-[0.2em] hover:bg-gray-800 transition-colors flex items-center justify-center gap-2"
+                class="px-4 md:px-6 py-2 bg-primary text-white text-xs font-semibold tracking-[0.15em] md:tracking-[0.2em] hover:opacity-90 transition-colors flex items-center justify-center gap-2"
                 (click)="onNewSale()"
               >
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -144,7 +144,7 @@ import { VentaDTO } from '../../../../core/models/venta.models';
         @if (loading()) {
         <div class="flex items-center justify-center h-64">
           <div
-            class="h-10 w-10 border-4 border-gray-300 border-t-black rounded-full animate-spin"
+            class="h-10 w-10 border-4 border-gray-300 border-t-primary rounded-full animate-spin"
           ></div>
         </div>
         } @else if (sales().length === 0) {

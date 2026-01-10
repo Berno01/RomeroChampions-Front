@@ -227,7 +227,7 @@ export class DashboardComponent implements OnInit {
       stroke: {
         curve: 'smooth',
         width: 2,
-        colors: ['#000000'],
+        colors: ['#CD0001'],
       },
       xaxis: {
         categories: categories,
@@ -256,12 +256,12 @@ export class DashboardComponent implements OnInit {
           colorStops: [
             {
               offset: 0,
-              color: '#000000',
+              color: '#CD0001',
               opacity: 0.1,
             },
             {
               offset: 100,
-              color: '#000000',
+              color: '#CD0001',
               opacity: 0,
             },
           ],
@@ -300,7 +300,7 @@ export class DashboardComponent implements OnInit {
       xaxis: {
         categories: categoryLabels,
       },
-      colors: ['#333333'],
+      colors: ['#CD0001'],
       grid: {
         show: false,
       },

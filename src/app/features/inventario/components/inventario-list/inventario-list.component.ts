@@ -54,7 +54,7 @@ type CategoriaFiltro = string;
               <button
                 type="button"
                 class="px-4 py-2 text-xs md:text-sm font-semibold tracking-wider transition-all"
-                [class.bg-black]="categoriaSeleccionada() === cat"
+                [class.bg-primary]="categoriaSeleccionada() === cat"
                 [class.text-white]="categoriaSeleccionada() === cat"
                 [class.bg-white]="categoriaSeleccionada() !== cat"
                 [class.text-gray-700]="categoriaSeleccionada() !== cat"
@@ -103,7 +103,7 @@ type CategoriaFiltro = string;
           @if (loading()) {
           <div class="flex items-center justify-center py-24">
             <div
-              class="h-12 w-12 border-4 border-gray-300 border-t-black rounded-full animate-spin"
+              class="h-12 w-12 border-4 border-gray-300 border-t-primary rounded-full animate-spin"
             ></div>
           </div>
           } @else if (inventarioFiltrado().length === 0) {

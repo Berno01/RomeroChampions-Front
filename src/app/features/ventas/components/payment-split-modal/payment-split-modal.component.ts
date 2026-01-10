@@ -72,7 +72,7 @@ import { FormsModule } from '@angular/forms';
             </button>
             <button
               type="button"
-              class="px-8 py-3 bg-black text-white text-sm font-semibold tracking-[0.2em] disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed"
+              class="px-8 py-3 bg-primary text-white text-sm font-semibold tracking-[0.2em] disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed"
               [disabled]="!isValid()"
               (click)="onConfirm()"
             >

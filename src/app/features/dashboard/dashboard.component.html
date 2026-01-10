@@ -93,7 +93,7 @@
                 </div>
                 <button
                   (click)="applyCustomDate()"
-                  class="w-full bg-black text-white text-sm font-medium py-2 rounded-lg hover:bg-gray-800 transition-colors"
+                  class="w-full bg-primary text-white text-sm font-medium py-2 rounded-lg hover:opacity-90 transition-colors"
                 >
                   Aplicar Rango
                 </button>
@@ -283,7 +283,7 @@
           @for (prod of topProductos(); track prod.nombre_modelo; let i = $index) {
           <div class="flex items-center gap-4 p-2 hover:bg-gray-50 rounded-lg transition-colors">
             <div
-              class="flex-shrink-0 w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-sm font-bold"
+              class="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-sm font-bold"
             >
               {{ i + 1 }}
             </div>
@@ -407,7 +407,7 @@
               <span class="text-gray-900">{{ metodo.porcentaje }}%</span>
             </div>
             <div class="w-full bg-gray-100 rounded-full h-2">
-              <div class="bg-black h-2 rounded-full" [style.width.%]="metodo.porcentaje"></div>
+              <div class="bg-primary h-2 rounded-full" [style.width.%]="metodo.porcentaje"></div>
             </div>
           </div>
           }

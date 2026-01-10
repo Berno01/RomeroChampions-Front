@@ -46,9 +46,9 @@ import { FormsModule } from '@angular/forms';
                 <button
                   type="button"
                   class="px-4 py-2 border text-sm font-semibold tracking-wider transition-colors"
-                  [class.bg-black]="tipoDescuento() === 'DESCUENTO'"
+                  [class.bg-primary]="tipoDescuento() === 'DESCUENTO'"
                   [class.text-white]="tipoDescuento() === 'DESCUENTO'"
-                  [class.border-black]="tipoDescuento() === 'DESCUENTO'"
+                  [class.border-primary]="tipoDescuento() === 'DESCUENTO'"
                   [class.bg-white]="tipoDescuento() !== 'DESCUENTO'"
                   [class.text-gray-600]="tipoDescuento() !== 'DESCUENTO'"
                   [class.border-gray-300]="tipoDescuento() !== 'DESCUENTO'"
@@ -59,9 +59,9 @@ import { FormsModule } from '@angular/forms';
                 <button
                   type="button"
                   class="px-4 py-2 border text-sm font-semibold tracking-wider transition-colors"
-                  [class.bg-black]="tipoDescuento() === 'PROMOCION'"
+                  [class.bg-primary]="tipoDescuento() === 'PROMOCION'"
                   [class.text-white]="tipoDescuento() === 'PROMOCION'"
-                  [class.border-black]="tipoDescuento() === 'PROMOCION'"
+                  [class.border-primary]="tipoDescuento() === 'PROMOCION'"
                   [class.bg-white]="tipoDescuento() !== 'PROMOCION'"
                   [class.text-gray-600]="tipoDescuento() !== 'PROMOCION'"
                   [class.border-gray-300]="tipoDescuento() !== 'PROMOCION'"
@@ -83,7 +83,7 @@ import { FormsModule } from '@angular/forms';
                   min="0"
                   [max]="maxDescuento"
                   step="0.01"
-                  class="w-full font-serif text-4xl text-gray-900 outline-none border-b-2 border-gray-200 focus:border-black transition-colors pb-1"
+                  class="w-full font-serif text-4xl text-gray-900 outline-none border-b-2 border-gray-200 focus:border-primary transition-colors pb-1"
                   [ngModel]="montoDescuento()"
                   (ngModelChange)="onMontoChange($event)"
                   placeholder="0"
@@ -114,7 +114,7 @@ import { FormsModule } from '@angular/forms';
             </button>
             <button
               type="button"
-              class="px-8 py-3 bg-black text-white text-sm font-semibold tracking-[0.2em] disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed"
+              class="px-8 py-3 bg-primary text-white text-sm font-semibold tracking-[0.2em] disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed"
               [disabled]="!isValid()"
               (click)="onConfirm()"
             >

@@ -53,7 +53,7 @@ import { CommonModule } from '@angular/common';
           <div class="absolute inset-0 bg-white/80 z-50 flex items-center justify-center">
             <div class="text-center">
               <div
-                class="h-12 w-12 border-4 border-gray-300 border-t-black rounded-full animate-spin mx-auto"
+                class="h-12 w-12 border-4 border-gray-300 border-t-primary rounded-full animate-spin mx-auto"
               ></div>
               <p class="mt-4 text-sm text-gray-600">Cargando venta...</p>
             </div>
@@ -74,7 +74,7 @@ import { CommonModule } from '@angular/common';
       <!-- Botón Flotante Mobile (Solo visible en mobile) -->
       <button
         type="button"
-        class="lg:hidden fixed bottom-6 right-4 z-40 bg-black text-white rounded-full shadow-2xl flex items-center gap-3 px-6 py-4 hover:bg-gray-800 transition-all active:scale-95"
+        class="lg:hidden fixed bottom-6 right-4 z-40 bg-primary text-white rounded-full shadow-2xl flex items-center gap-3 px-6 py-4 hover:opacity-90 transition-all active:scale-95"
         (click)="toggleCartModal()"
       >
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

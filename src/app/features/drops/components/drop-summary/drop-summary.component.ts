@@ -144,7 +144,7 @@ import { take } from 'rxjs/operators';
         <!-- Botón Guardar -->
         <button
           type="button"
-          class="w-full px-4 py-3 bg-black text-white text-xs md:text-sm font-semibold tracking-[0.15em] md:tracking-[0.2em] hover:bg-gray-800 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+          class="w-full px-4 py-3 bg-primary text-white text-xs md:text-sm font-semibold tracking-[0.15em] md:tracking-[0.2em] hover:opacity-90 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
           [disabled]="saving()"
           (click)="onSaveDrop()"
         >
