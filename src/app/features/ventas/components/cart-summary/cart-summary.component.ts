@@ -14,12 +14,20 @@ import { VentasService } from '../../../../core/services/ventas.service';
 import { ToastService } from '../../../../core/services/toast.service';
 import { PaymentSplitModalComponent } from '../payment-split-modal/payment-split-modal.component';
 import { DescuentoModalComponent } from '../descuento-modal/descuento-modal.component';
+import { ClientSelectorModalComponent } from '../client-selector-modal/client-selector-modal.component';
+import { ClienteDTO } from '../../../../core/models/cliente.models';
 import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-cart-summary',
   standalone: true,
-  imports: [CommonModule, FormsModule, PaymentSplitModalComponent, DescuentoModalComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    PaymentSplitModalComponent,
+    DescuentoModalComponent,
+    ClientSelectorModalComponent,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="h-full flex flex-col bg-gray-50">
@@ -82,6 +90,62 @@ import { take } from 'rxjs/operators';
             </svg>
             CREDITO
           </button>
+        </div>
+
+        <!-- Cliente Selection -->
+        <div class="mt-2">
+          @if (!selectedCliente()) {
+          <button
+            type="button"
+            class="w-full flex items-center justify-between px-3 py-2 border border-dashed border-gray-300 rounded hover:border-black hover:bg-gray-50 transition-colors group"
+            (click)="onOpenClientModal()"
+            [class.border-red-300]="tipoVenta() === 'CREDITO'"
+            [class.bg-red-50]="tipoVenta() === 'CREDITO'"
+          >
+            <div class="flex items-center gap-2 text-gray-500 group-hover:text-black">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                ></path>
+              </svg>
+              <span class="text-xs font-medium uppercase tracking-wide">
+                {{ tipoVenta() === 'CREDITO' ? 'ASIGNAR CLIENTE *' : 'ASIGNAR CLIENTE (OPCIONAL)' }}
+              </span>
+            </div>
+            <span class="text-lg leading-none text-gray-400 group-hover:text-black">+</span>
+          </button>
+          } @else {
+          <div
+            class="w-full flex items-center justify-between px-3 py-2 border border-black bg-white rounded shadow-sm"
+          >
+            <div class="flex items-center gap-2 min-w-0">
+              <div
+                class="w-6 h-6 rounded-full bg-black text-white flex items-center justify-center text-[10px] font-bold"
+              >
+                {{ selectedCliente()!.nombre_completo.charAt(0).toUpperCase() }}
+              </div>
+              <div class="flex flex-col min-w-0">
+                <span class="text-xs font-bold text-gray-900 truncate">{{
+                  selectedCliente()!.nombre_completo
+                }}</span>
+                <span class="text-[10px] text-gray-500">{{ selectedCliente()!.celular }}</span>
+              </div>
+            </div>
+            <button class="text-gray-400 hover:text-red-500 p-1" (click)="onRemoveCliente()">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                ></path>
+              </svg>
+            </button>
+          </div>
+          }
         </div>
 
         @if (tipoVenta() === 'CREDITO') {
@@ -310,6 +374,11 @@ import { take } from 'rxjs/operators';
       (confirmed)="onDescuentoConfirmed($event)"
       (cancelled)="onDescuentoCancelled()"
     ></app-descuento-modal>
+    } @if (showClientModal()) {
+    <app-client-selector-modal
+      (close)="onCloseClientModal()"
+      (selectCliente)="onSelectCliente($event)"
+    ></app-client-selector-modal>
     } @if (showSecondPaymentModal()) {
     <div
       class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
@@ -379,11 +448,13 @@ export class CartSummaryComponent {
   selectedPaymentMethod = this.ventasStore.selectedPaymentMethod;
   tipoVenta = this.ventasStore.tipoVenta;
   fechaLimite = this.ventasStore.fechaLimite;
+  selectedCliente = this.ventasStore.selectedCliente;
   processing = this.ventasStore.processing; // Usar el signal del store
   descuento = this.ventasStore.descuento;
 
   showPaymentModal = signal<boolean>(false);
   showDescuentoModal = signal<boolean>(false);
+  showClientModal = signal<boolean>(false);
   showSecondPaymentModal = signal<boolean>(false);
   firstPaymentMethod = signal<'EFECTIVO' | 'QR' | 'TARJETA' | ''>('');
   firstPaymentAmount = signal<number>(0);
@@ -510,6 +581,24 @@ export class CartSummaryComponent {
 
   onDescuentoCancelled() {
     this.showDescuentoModal.set(false);
+  }
+
+  // --- Client Modal ---
+  onOpenClientModal() {
+    this.showClientModal.set(true);
+  }
+
+  onCloseClientModal() {
+    this.showClientModal.set(false);
+  }
+
+  onSelectCliente(cliente: ClienteDTO) {
+    this.ventasStore.selectedCliente.set(cliente);
+    this.showClientModal.set(false);
+  }
+
+  onRemoveCliente() {
+    this.ventasStore.selectedCliente.set(null);
   }
 
   onPaymentConfirmed(amount: number) {

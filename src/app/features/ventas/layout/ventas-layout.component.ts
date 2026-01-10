@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CatalogComponent } from '../components/catalog/catalog.component';
 import { CartSummaryComponent } from '../components/cart-summary/cart-summary.component';
@@ -206,12 +206,18 @@ export class VentasLayoutComponent implements OnInit {
       // Cargar la venta para edición (hidratación)
       this.ventasStore.loadSaleForEdit(this.editingId);
     } else {
-      // Modo creación: limpiar el estado
-      this.ventasStore.resetState();
+      // Modo creación: limpiar el estado (carrito, cliente, pagos)
+      this.ventasStore.resetStore();
     }
   }
 
+  ngOnDestroy() {
+    this.ventasStore.resetStore();
+  }
+
   goBack() {
+    // Al salir, limpiamos el store para evitar que datos residuales afecten futuras ventas
+    this.ventasStore.resetStore();
     this.router.navigate(['/ventas']);
   }
 

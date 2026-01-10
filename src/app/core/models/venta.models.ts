@@ -10,6 +10,8 @@ export interface VentaDTO {
   id_venta?: number; // para creación mandamos su valor en null
   id_sucursal: number;
   id_usuario?: number; // ID del usuario que realiza la venta
+  id_cliente?: number | null; // Cliente opcional (obligatorio en credito)
+  nombre_cliente?: string; // Para mostrar en listados
   username?: string; // Nombre del usuario que realiza la venta (viene del back)
   total: number; // calculado
   descuento: number; // Descuento opcional aplicado a la venta

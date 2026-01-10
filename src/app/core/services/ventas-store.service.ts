@@ -3,11 +3,13 @@ import { Router } from '@angular/router';
 import { forkJoin, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { CartItem, VentaDTO } from '../models/venta.models';
+import { ClienteDTO } from '../models/cliente.models';
 import { SessionService } from './session.service';
 import { VentasService } from './ventas.service';
 import { ToastService } from './toast.service';
 import { ColorDTO, DetallePrendaDTO, TallaDTO } from '../models/catalogo.models';
 import { CatalogService } from '../../features/ventas/services/catalog.service';
+import { ClientesService } from './clientes.service';
 
 @Injectable({
   providedIn: 'root',
@@ -17,6 +19,7 @@ export class VentasStoreService {
   private ventasService = inject(VentasService);
   private catalogService = inject(CatalogService);
   private toastService = inject(ToastService);
+  private clientesService = inject(ClientesService);
   private router = inject(Router);
 
   // --- Estado (Signals Writable) ---
@@ -32,11 +35,12 @@ export class VentasStoreService {
     tarjeta: 0,
   });
   readonly splitActive = signal<boolean>(false);
-  readonly selectedPaymentMethod = signal<'EFECTIVO' | 'QR' | 'TARJETA' | ''>('EFECTIVO');
+  readonly selectedPaymentMethod = signal<'EFECTIVO' | 'QR' | 'TARJETA' | ''>('');
   readonly descuento = signal<number>(0);
   readonly tipoDescuento = signal<'SIN DESCUENTO' | 'PROMOCION' | 'DESCUENTO'>('SIN DESCUENTO');
   readonly tipoVenta = signal<'CONTADO' | 'CREDITO'>('CONTADO');
   readonly fechaLimite = signal<string | null>(null);
+  readonly selectedCliente = signal<ClienteDTO | null>(null);
   readonly editingSaleId = signal<number | null>(null);
   readonly isLoading = signal<boolean>(false);
   readonly processing = signal<boolean>(false); // Estado de procesamiento de venta
@@ -72,6 +76,7 @@ export class VentasStoreService {
     return {
       id_venta: editingId ?? undefined,
       id_sucursal: this.sessionService.sucursalId(),
+      id_cliente: this.selectedCliente()?.id_cliente ?? null,
       id_usuario: this.sessionService.userId(),
       total: finalTotal,
       descuento: descuentoValue,
@@ -187,23 +192,20 @@ export class VentasStoreService {
   }
 
   clearCart() {
-    this.cartItems.set([]);
-    this.resetPayments();
-    this.editingSaleId.set(null);
-    this.descuento.set(0);
-    this.tipoDescuento.set('SIN DESCUENTO');
+    this.resetStore();
   }
 
-  resetState() {
+  resetStore() {
     this.cartItems.set([]);
     this.resetPayments();
     this.editingSaleId.set(null);
     this.tipoVenta.set('CONTADO');
     this.splitActive.set(false);
-    this.selectedPaymentMethod.set('EFECTIVO');
+    this.selectedPaymentMethod.set('');
     this.descuento.set(0);
     this.tipoDescuento.set('SIN DESCUENTO');
     this.fechaLimite.set(null);
+    this.selectedCliente.set(null); // Limpiar cliente
   }
 
   setPayment(type: 'EFECTIVO' | 'QR' | 'TARJETA', amount?: number) {
@@ -351,8 +353,9 @@ export class VentasStoreService {
       // Al agregar un pago, setPayment lo pondrá en true
       this.splitActive.set(false);
     } else {
+      // CONTADO: Iniciar sin pagos preseleccionados para obligar al usuario a elegir
       this.paymentAmounts.set({
-        efectivo: total,
+        efectivo: 0,
         qr: 0,
         tarjeta: 0,
       });
@@ -441,6 +444,24 @@ export class VentasStoreService {
       next: (venta) => {
         // 1. Establecer datos básicos de la venta
         this.sucursalId.set(venta.id_sucursal);
+
+        // Comparación segura de IDs (convertir a número por si viene string)
+        const clienteId = Number(venta.id_cliente);
+
+        // Cargar Cliente si existe
+        if (clienteId && clienteId > 0) {
+          this.clientesService.getAllClientes().subscribe({
+            next: (clientes) => {
+              const found = clientes.find((c) => c.id_cliente == clienteId); // Doble igual para tolerancia string/number
+              if (found) {
+                this.selectedCliente.set(found);
+              }
+            },
+            error: (err) => console.error('Error al cargar lista de clientes en la venta:', err),
+          });
+        } else {
+          this.selectedCliente.set(null);
+        }
 
         // Actualizar SessionService para que toda la app use esta sucursal
         const sucursalNombre = this.getBranchName(venta.id_sucursal);
@@ -622,7 +643,7 @@ export class VentasStoreService {
         next: () => {
           this.processing.set(false);
           this.toastService.success(`Venta #${editingId} actualizada correctamente`, 4000);
-          this.resetState();
+          this.resetStore();
           this.router.navigate(['/ventas']);
         },
         error: (err) => {
@@ -637,7 +658,7 @@ export class VentasStoreService {
         next: (response) => {
           this.processing.set(false);
           this.toastService.success(`Venta creada exitosamente. ${response.mensaje}`, 4000);
-          this.resetState();
+          this.resetStore();
           this.router.navigate(['/ventas']);
         },
         error: (err) => {

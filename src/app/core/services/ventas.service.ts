@@ -58,6 +58,8 @@ export class VentasService {
       id_venta: sale.id_venta ?? sale.idVenta,
       id_sucursal: sale.id_sucursal ?? sale.idSucursal,
       id_usuario: sale.id_usuario ?? sale.idUsuario,
+      id_cliente: sale.id_cliente ?? sale.idCliente,
+      nombre_cliente: sale.nombre_cliente ?? sale.nombreCliente,
       username: sale.username,
       total: sale.total,
       descuento: sale.descuento ?? 0,
