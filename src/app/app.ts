@@ -10,7 +10,7 @@ import { ToastContainerComponent } from './shared/components/toast-container/toa
   styleUrl: './app.scss',
 })
 export class App {
-  protected readonly title = signal('dunno');
+  protected readonly title = signal('romerochampions');
   private router = inject(Router);
   protected showNavbar = signal(true);
 
