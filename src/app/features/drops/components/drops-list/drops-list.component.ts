@@ -15,11 +15,12 @@ import { DropsStoreService } from '../../services/drops-store.service';
 import { SessionService } from '../../../../core/services/session.service';
 import { ToastService } from '../../../../core/services/toast.service';
 import { Drop } from '../../../../core/models/drops.models';
+import { DropDetailModalComponent } from '../drop-detail-modal/drop-detail-modal.component';
 
 @Component({
   selector: 'app-drops-list',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, DropDetailModalComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="h-[calc(100vh-5rem)] flex flex-col bg-white">
@@ -223,12 +224,11 @@ import { Drop } from '../../../../core/models/drops.models';
                 </td>
                 <td class="px-6 py-4 text-sm text-center">
                   <div class="flex items-center justify-center gap-2">
-                    @if (drop.estado !== false) {
-                    <!-- Botón Ver -->
+                    <!-- Botón Ver Detalles (todos) -->
                     <button
                       type="button"
-                      class="p-2 text-gray-400 hover:text-blue-600 transition-colors"
-                      (click)="onViewDrop(drop)"
+                      class="p-2 text-gray-400 hover:text-green-600 transition-colors"
+                      (click)="onViewDetails(drop.idRecepcion!)"
                       title="Ver detalles"
                     >
                       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -246,7 +246,24 @@ import { Drop } from '../../../../core/models/drops.models';
                         ></path>
                       </svg>
                     </button>
-                    <!-- Botón Anular -->
+                    @if (isAdmin() && drop.estado !== false) {
+                    <!-- Botón Ver/Editar (admin) -->
+                    <button
+                      type="button"
+                      class="p-2 text-gray-400 hover:text-blue-600 transition-colors"
+                      (click)="onViewDrop(drop)"
+                      title="Editar"
+                    >
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                        ></path>
+                      </svg>
+                    </button>
+                    <!-- Botón Anular (admin) -->
                     <button
                       type="button"
                       class="p-2 text-gray-400 hover:text-red-600 transition-colors"
@@ -319,21 +336,30 @@ import { Drop } from '../../../../core/models/drops.models';
             </div>
 
             <!-- Acciones -->
-            @if (drop.estado !== false) {
             <div class="flex gap-2">
+              <button
+                type="button"
+                class="flex-1 px-3 py-2 bg-green-600 text-white text-xs font-semibold rounded hover:bg-green-700 transition-colors"
+                (click)="onViewDetails(drop.idRecepcion!)"
+              >
+                VER DETALLES
+              </button>
+            </div>
+            @if (isAdmin() && drop.estado !== false) {
+            <div class="flex gap-2 mt-2">
               <button
                 type="button"
                 class="flex-1 px-3 py-2 border border-gray-300 text-xs font-medium text-gray-700 hover:bg-gray-50"
                 (click)="onViewDrop(drop)"
               >
-                Ver Detalles
+                EDITAR
               </button>
               <button
                 type="button"
                 class="px-3 py-2 border border-red-300 text-xs font-medium text-red-600 hover:bg-red-50"
                 (click)="onDeleteDrop(drop)"
               >
-                Anular
+                ANULAR
               </button>
             </div>
             }
@@ -343,6 +369,10 @@ import { Drop } from '../../../../core/models/drops.models';
         }
       </div>
     </div>
+
+    @if (showDetailModal() && selectedDropId()) {
+    <app-drop-detail-modal [dropId]="selectedDropId()!" (closed)="onCloseDetailModal()" />
+    }
   `,
 })
 export class DropsListComponent {
@@ -360,6 +390,8 @@ export class DropsListComponent {
   selectedDateEnd = signal<string>(this.getTodayString());
   dateRangeMode = signal<boolean>(false);
   selectedBranch = signal<number | null>(null);
+  showDetailModal = signal<boolean>(false);
+  selectedDropId = signal<number | null>(null);
 
   // Computed
   isAdmin = computed(() => this.sessionService.rol() === 'ADMIN');
@@ -493,6 +525,16 @@ export class DropsListComponent {
   onViewDrop(drop: Drop): void {
     if (!drop.idRecepcion) return;
     this.router.navigate(['/drops/editar', drop.idRecepcion]);
+  }
+
+  onViewDetails(id: number): void {
+    this.selectedDropId.set(id);
+    this.showDetailModal.set(true);
+  }
+
+  onCloseDetailModal(): void {
+    this.showDetailModal.set(false);
+    this.selectedDropId.set(null);
   }
 
   onDeleteDrop(drop: Drop): void {

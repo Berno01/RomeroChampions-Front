@@ -15,11 +15,12 @@ import { VentasStoreService } from '../../../../core/services/ventas-store.servi
 import { SessionService } from '../../../../core/services/session.service';
 import { ToastService } from '../../../../core/services/toast.service';
 import { VentaDTO } from '../../../../core/models/venta.models';
+import { SaleDetailModalComponent } from '../sale-detail-modal/sale-detail-modal.component';
 
 @Component({
   selector: 'app-sales-list',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, SaleDetailModalComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="h-[calc(100vh-5rem)] flex flex-col bg-white">
@@ -277,7 +278,29 @@ import { VentaDTO } from '../../../../core/models/venta.models';
                 @if (isAdmin()) {
                 <td class="px-6 py-4 text-sm text-center">
                   <div class="flex items-center justify-center gap-2">
-                    @if (sale.estado_venta !== false) {
+                    <!-- Botón Ver Detalles (todos) -->
+                    <button
+                      type="button"
+                      class="p-2 text-gray-400 hover:text-green-600 transition-colors"
+                      (click)="onViewDetails(sale.id_venta!)"
+                      title="Ver Detalles"
+                    >
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                        ></path>
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                        ></path>
+                      </svg>
+                    </button>
+                    @if (isAdmin()) { @if (sale.estado_venta !== false) {
                     <!-- Botón Editar (solo ventas activas) -->
                     <button
                       type="button"
@@ -327,7 +350,7 @@ import { VentaDTO } from '../../../../core/models/venta.models';
                         ></path>
                       </svg>
                     </button>
-                    }
+                    } }
                   </div>
                 </td>
                 }
@@ -474,8 +497,31 @@ import { VentaDTO } from '../../../../core/models/venta.models';
             </div>
 
             <!-- Acciones -->
-            @if (isAdmin()) {
             <div class="flex gap-2">
+              <button
+                type="button"
+                class="flex-1 px-3 py-2 bg-green-600 text-white text-xs font-semibold rounded hover:bg-green-700 transition-colors flex items-center justify-center gap-1.5"
+                (click)="onViewDetails(sale.id_venta!)"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                  ></path>
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                  ></path>
+                </svg>
+                VER DETALLES
+              </button>
+            </div>
+            @if (isAdmin()) {
+            <div class="flex gap-2 mt-2">
               @if (sale.estado_venta !== false) {
               <button
                 type="button"
@@ -563,6 +609,10 @@ import { VentaDTO } from '../../../../core/models/venta.models';
         }
       </div>
     </div>
+
+    @if (showDetailModal() && selectedSaleId()) {
+    <app-sale-detail-modal [saleId]="selectedSaleId()!" (closed)="onCloseDetailModal()" />
+    }
   `,
 })
 export class SalesListComponent {
@@ -579,6 +629,8 @@ export class SalesListComponent {
   selectedDateStart = signal<string>(this.getTodayString());
   selectedDateEnd = signal<string>(this.getTodayString());
   dateRangeMode = signal<boolean>(false);
+  showDetailModal = signal<boolean>(false);
+  selectedSaleId = signal<number | null>(null);
 
   isAdmin = computed(() => this.sessionService.rol() === 'ADMIN');
 
@@ -680,6 +732,16 @@ export class SalesListComponent {
   onEditSale(sale: VentaDTO) {
     if (!sale.id_venta) return;
     this.router.navigate(['/ventas/editar', sale.id_venta]);
+  }
+
+  onViewDetails(id: number): void {
+    this.selectedSaleId.set(id);
+    this.showDetailModal.set(true);
+  }
+
+  onCloseDetailModal(): void {
+    this.showDetailModal.set(false);
+    this.selectedSaleId.set(null);
   }
 
   onDeleteSale(sale: VentaDTO) {

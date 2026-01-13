@@ -21,9 +21,11 @@ import { take } from 'rxjs/operators';
   imports: [CommonModule, FormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="h-full flex flex-col bg-gray-50">
+    <div class="lg:h-full lg:flex lg:flex-col lg:overflow-hidden bg-gray-50">
       <!-- Header (Solo visible en desktop) -->
-      <div class="hidden lg:flex px-3 md:px-6 py-3 md:py-4 border-b border-gray-200 bg-white">
+      <div
+        class="flex-shrink-0 hidden lg:flex px-3 md:px-6 py-3 md:py-4 border-b border-gray-200 bg-white"
+      >
         <div class="flex items-center justify-between w-full">
           <h2
             class="text-xs md:text-sm font-bold tracking-[0.15em] md:tracking-[0.2em] text-gray-900"
@@ -43,7 +45,7 @@ import { take } from 'rxjs/operators';
       </div>
 
       <!-- Items List -->
-      <div class="flex-1 overflow-y-auto px-3 md:px-6 py-3 md:py-4">
+      <div class="flex-1 min-h-0 lg:overflow-y-auto px-3 md:px-6 py-3 md:py-4">
         @if (itemCount() === 0) {
         <div class="flex flex-col items-center justify-center h-full text-gray-400">
           <svg
@@ -111,7 +113,7 @@ import { take } from 'rxjs/operators';
       <!-- Footer con Datos y Botón Guardar -->
       @if (itemCount() > 0) {
       <div
-        class="border-t border-gray-200 bg-white px-3 md:px-6 py-3 md:py-4 space-y-3 md:space-y-4"
+        class="flex-shrink-0 border-t border-gray-200 bg-white px-3 md:px-6 py-3 md:py-4 space-y-3 md:space-y-4"
       >
         <!-- Total de Items -->
         <div class="flex items-center justify-between text-xs md:text-sm">
@@ -125,7 +127,7 @@ import { take } from 'rxjs/operators';
             class="text-[10px] md:text-xs font-semibold tracking-[0.15em] md:tracking-[0.2em] text-gray-500"
             >SUCURSAL</label
           >
-          @if (isAdmin()) {
+          @if (!isEditMode() && isAdmin()) {
           <select
             class="w-full px-3 py-2 border border-black text-xs md:text-sm font-medium text-gray-900 outline-none focus:ring-2 focus:ring-black"
             [ngModel]="sessionService.sucursalId()"
@@ -135,7 +137,7 @@ import { take } from 'rxjs/operators';
             <option [value]="2">Secundaria</option>
           </select>
           } @else {
-          <div class="px-3 py-2 border border-gray-300 text-xs md:text-sm bg-gray-50">
+          <div class="px-3 py-2 border border-gray-300 text-xs md:text-sm font-medium text-gray-900 bg-gray-50">
             {{ sessionService.sucursalNombre() }}
           </div>
           }
