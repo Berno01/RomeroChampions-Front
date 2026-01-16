@@ -137,7 +137,9 @@ import { take } from 'rxjs/operators';
             <option [value]="2">Secundaria</option>
           </select>
           } @else {
-          <div class="px-3 py-2 border border-gray-300 text-xs md:text-sm font-medium text-gray-900 bg-gray-50">
+          <div
+            class="px-3 py-2 border border-gray-300 text-xs md:text-sm font-medium text-gray-900 bg-gray-50"
+          >
             {{ sessionService.sucursalNombre() }}
           </div>
           }

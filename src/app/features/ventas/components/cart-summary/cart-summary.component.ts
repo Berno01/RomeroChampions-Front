@@ -33,9 +33,9 @@ import { take } from 'rxjs/operators';
     <div class="lg:h-full lg:flex lg:flex-col lg:overflow-hidden bg-gray-50">
       <!-- Header (Compact & Enhanced) -->
       <div
-        class="flex-shrink-0 hidden lg:flex flex-col px-4 py-3 border-b border-gray-200 bg-white gap-2"
+        class="flex-shrink-0 flex lg:flex flex-col px-4 py-3 border-b border-gray-200 bg-white gap-2"
       >
-        <div class="flex items-center justify-between w-full">
+        <div class="hidden lg:flex items-center justify-between w-full">
           <h2
             class="text-xs md:text-sm font-bold tracking-[0.15em] md:tracking-[0.2em] text-gray-900"
           >
