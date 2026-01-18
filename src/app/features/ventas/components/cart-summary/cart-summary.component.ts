@@ -42,13 +42,13 @@ import { take } from 'rxjs/operators';
             RESUMEN ({{ itemCount() }})
           </h2>
           @if (itemCount() > 0) {
-          <button
-            type="button"
-            class="text-[10px] md:text-xs text-gray-400 hover:text-red-600 transition-colors uppercase tracking-wider"
-            (click)="onClearCart()"
-          >
-            Vaciar
-          </button>
+            <button
+              type="button"
+              class="text-[10px] md:text-xs text-gray-400 hover:text-red-600 transition-colors uppercase tracking-wider"
+              (click)="onClearCart()"
+            >
+              Vaciar
+            </button>
           }
         </div>
 
@@ -97,343 +97,378 @@ import { take } from 'rxjs/operators';
         <!-- Cliente Selection -->
         <div class="mt-2">
           @if (!selectedCliente()) {
-          <button
-            type="button"
-            class="w-full flex items-center justify-between px-3 py-2 border border-dashed border-gray-300 rounded hover:border-black hover:bg-gray-50 transition-colors group"
-            (click)="onOpenClientModal()"
-            [class.border-red-300]="tipoVenta() === 'CREDITO'"
-            [class.bg-red-50]="tipoVenta() === 'CREDITO'"
-          >
-            <div class="flex items-center gap-2 text-gray-500 group-hover:text-black">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                ></path>
-              </svg>
-              <span class="text-xs font-medium uppercase tracking-wide">
-                {{ tipoVenta() === 'CREDITO' ? 'ASIGNAR CLIENTE *' : 'ASIGNAR CLIENTE (OPCIONAL)' }}
-              </span>
-            </div>
-            <span class="text-lg leading-none text-gray-400 group-hover:text-black">+</span>
-          </button>
-          } @else {
-          <div
-            class="w-full flex items-center justify-between px-3 py-2 border border-black bg-white rounded shadow-sm"
-          >
-            <div class="flex items-center gap-2 min-w-0">
-              <div
-                class="w-6 h-6 rounded-full bg-black text-white flex items-center justify-center text-[10px] font-bold"
-              >
-                {{ selectedCliente()!.nombre_completo.charAt(0).toUpperCase() }}
+            <button
+              type="button"
+              class="w-full flex items-center justify-between px-3 py-2 border border-dashed border-gray-300 rounded hover:border-black hover:bg-gray-50 transition-colors group"
+              (click)="onOpenClientModal()"
+              [class.border-red-300]="tipoVenta() === 'CREDITO'"
+              [class.bg-red-50]="tipoVenta() === 'CREDITO'"
+            >
+              <div class="flex items-center gap-2 text-gray-500 group-hover:text-black">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  ></path>
+                </svg>
+                <span class="text-xs font-medium uppercase tracking-wide">
+                  {{
+                    tipoVenta() === 'CREDITO' ? 'ASIGNAR CLIENTE *' : 'ASIGNAR CLIENTE (OPCIONAL)'
+                  }}
+                </span>
               </div>
-              <div class="flex flex-col min-w-0">
-                <span class="text-xs font-bold text-gray-900 truncate">{{
-                  selectedCliente()!.nombre_completo
-                }}</span>
-                <span class="text-[10px] text-gray-500">{{ selectedCliente()!.celular }}</span>
-              </div>
-            </div>
-            <button class="text-gray-400 hover:text-red-500 p-1" (click)="onRemoveCliente()">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M6 18L18 6M6 6l12 12"
-                ></path>
-              </svg>
+              <span class="text-lg leading-none text-gray-400 group-hover:text-black">+</span>
             </button>
-          </div>
+          } @else {
+            <div
+              class="w-full flex items-center justify-between px-3 py-2 border border-black bg-white rounded shadow-sm"
+            >
+              <div class="flex items-center gap-2 min-w-0">
+                <div
+                  class="w-6 h-6 rounded-full bg-black text-white flex items-center justify-center text-[10px] font-bold"
+                >
+                  {{ selectedCliente()!.nombre_completo.charAt(0).toUpperCase() }}
+                </div>
+                <div class="flex flex-col min-w-0">
+                  <span class="text-xs font-bold text-gray-900 truncate">{{
+                    selectedCliente()!.nombre_completo
+                  }}</span>
+                  <span class="text-[10px] text-gray-500">{{ selectedCliente()!.celular }}</span>
+                </div>
+              </div>
+              <button class="text-gray-400 hover:text-red-500 p-1" (click)="onRemoveCliente()">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  ></path>
+                </svg>
+              </button>
+            </div>
           }
         </div>
 
         @if (tipoVenta() === 'CREDITO') {
-        <div class="mt-2">
-          <label class="block text-[10px] font-bold text-gray-500 mb-1 tracking-wider"
-            >FECHA LÍMITE</label
-          >
-          <input
-            type="datetime-local"
-            class="w-full px-2 py-1.5 text-xs border border-gray-300 rounded focus:border-black outline-none"
-            [ngModel]="fechaLimite()"
-            (ngModelChange)="onFechaLimiteChange($event)"
-          />
-        </div>
+          <div class="mt-2">
+            <label class="block text-[10px] font-bold text-gray-500 mb-1 tracking-wider"
+              >FECHA LÍMITE</label
+            >
+            <input
+              type="datetime-local"
+              class="w-full px-2 py-1.5 text-xs border border-gray-300 rounded focus:border-black outline-none"
+              [ngModel]="fechaLimite()"
+              (ngModelChange)="onFechaLimiteChange($event)"
+            />
+          </div>
         }
       </div>
 
       <!-- Cart Items List -->
       <div class="flex-1 min-h-0 lg:overflow-y-auto px-3 md:px-6 py-3 md:py-4">
         @if (itemCount() === 0) {
-        <div class="flex flex-col items-center justify-center h-full text-gray-400">
-          <svg
-            class="w-12 md:w-16 h-12 md:h-16 mb-3 md:mb-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="1.5"
-              d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
-            ></path>
-          </svg>
-          <p class="text-xs md:text-sm tracking-wider">Carrito vacío</p>
-        </div>
-        } @else {
-        <div class="space-y-3 md:space-y-4">
-          @for (item of cartItems(); track item.idVariante) {
-          <div class="flex gap-2 md:gap-3 pb-3 md:pb-4 border-b border-gray-100">
-            <img
-              [src]="resolveImageUrl(item.fotoUrl)"
-              [alt]="item.nombreModelo"
-              class="w-14 h-16 md:w-16 md:h-20 object-cover bg-gray-200 flex-shrink-0"
-              onerror="this.onerror=null; this.src='/assets/images/placeholder-product.svg'"
-            />
-            <div class="flex-1 flex flex-col justify-between min-w-0">
-              <div class="space-y-0.5 md:space-y-1">
-                <h4 class="text-[11px] md:text-xs font-semibold text-gray-900 truncate">
-                  {{ item.nombreModelo }}
-                </h4>
-                <p class="text-[10px] md:text-xs text-gray-500 line-clamp-1">
-                  {{ item.nombreMarca }} / {{ item.nombreColor }} / {{ item.nombreTalla }}
-                </p>
-              </div>
-              <div class="flex items-center justify-between gap-2 mt-2">
-                <div class="flex items-center gap-1.5 md:gap-2">
-                  <button
-                    type="button"
-                    class="w-7 h-7 md:w-6 md:h-6 flex items-center justify-center border border-gray-300 text-gray-600 hover:bg-gray-100 text-sm"
-                    (click)="decrementItem(item.idVariante)"
-                  >
-                    -
-                  </button>
-                  <span class="text-xs md:text-sm font-medium w-7 md:w-8 text-center">{{
-                    item.cantidad
-                  }}</span>
-                  <button
-                    type="button"
-                    class="w-7 h-7 md:w-6 md:h-6 flex items-center justify-center border border-gray-300 text-gray-600 hover:bg-gray-100 text-sm"
-                    [disabled]="item.cantidad >= item.stockMaximo"
-                    (click)="incrementItem(item.idVariante)"
-                  >
-                    +
-                  </button>
-                </div>
-                <p class="text-xs md:text-sm font-semibold text-gray-900">
-                  Bs. {{ item.subtotal.toFixed(2) }}
-                </p>
-              </div>
-            </div>
+          <div class="flex flex-col items-center justify-center h-full text-gray-400">
+            <svg
+              class="w-12 md:w-16 h-12 md:h-16 mb-3 md:mb-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.5"
+                d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+              ></path>
+            </svg>
+            <p class="text-xs md:text-sm tracking-wider">Carrito vacío</p>
           </div>
-          }
-        </div>
+        } @else {
+          <div class="space-y-3 md:space-y-4">
+            @for (item of cartItems(); track item.idVariante) {
+              <div class="flex gap-2 md:gap-3 pb-3 md:pb-4 border-b border-gray-100">
+                <img
+                  [src]="resolveImageUrl(item.fotoUrl)"
+                  [alt]="item.nombreModelo"
+                  class="w-14 h-16 md:w-16 md:h-20 object-cover bg-gray-200 flex-shrink-0"
+                  onerror="this.onerror=null; this.src='/assets/images/placeholder-product.svg'"
+                />
+                <div class="flex-1 flex flex-col justify-between min-w-0">
+                  <div class="space-y-0.5 md:space-y-1">
+                    <h4 class="text-[11px] md:text-xs font-semibold text-gray-900 truncate">
+                      {{ item.nombreModelo }}
+                    </h4>
+                    <p class="text-[10px] md:text-xs text-gray-500 line-clamp-1">
+                      {{ item.nombreMarca }} / {{ item.nombreColor }} / {{ item.nombreTalla }}
+                    </p>
+                  </div>
+                  <div class="flex items-center justify-between gap-2 mt-2">
+                    <div class="flex items-center gap-1.5 md:gap-2">
+                      <button
+                        type="button"
+                        class="w-7 h-7 md:w-6 md:h-6 flex items-center justify-center border border-gray-300 text-gray-600 hover:bg-gray-100 text-sm active:scale-95 transition-transform"
+                        (click)="decrementItem(item.idVariante)"
+                      >
+                        -
+                      </button>
+                      <span class="text-xs md:text-sm font-medium w-7 md:w-8 text-center">{{
+                        item.cantidad
+                      }}</span>
+                      <button
+                        type="button"
+                        class="w-7 h-7 md:w-6 md:h-6 flex items-center justify-center border border-gray-300 text-gray-600 hover:bg-gray-100 text-sm active:scale-95 transition-transform"
+                        [disabled]="item.cantidad >= item.stockMaximo"
+                        (click)="incrementItem(item.idVariante)"
+                      >
+                        +
+                      </button>
+                    </div>
+
+                    <div class="flex flex-col items-end">
+                      <div class="flex items-center gap-1 group relative">
+                        <span
+                          class="text-[10px] text-gray-400 font-medium opacity-0 group-hover:opacity-100 absolute -left-4 transition-opacity"
+                          >Bs.</span
+                        >
+                        <input
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          class="w-20 bg-transparent border-b border-gray-200 focus:border-black text-right text-xs md:text-sm font-semibold text-gray-900 outline-none pb-0.5 transition-colors placeholder-gray-300"
+                          [ngModel]="item.precioUnitario"
+                          (ngModelChange)="onUpdateItemPrice(item.idVariante, $event)"
+                          placeholder="0.00"
+                        />
+                      </div>
+                      @if (item.cantidad > 1) {
+                        <span class="text-[10px] text-gray-400 font-medium"
+                          >Total: Bs. {{ item.subtotal.toFixed(2) }}</span
+                        >
+                      }
+                    </div>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
         }
       </div>
 
       <!-- Footer (Compact) -->
       @if (itemCount() > 0) {
-      <div
-        class="flex-shrink-0 border-t border-gray-200 bg-white px-4 py-3 space-y-3 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]"
-      >
-        <!-- Totals -->
-        <div class="space-y-1.5 pb-2 border-b border-gray-100">
-          <div class="flex items-center justify-between text-xs">
-            <span class="text-gray-500">Subtotal</span>
-            <span class="font-medium">Bs. {{ total().toFixed(2) }}</span>
-          </div>
-          <div class="flex items-center justify-between text-xs">
-            <button
-              type="button"
-              class="text-gray-500 hover:text-black underline decoration-dashed underline-offset-2"
-              (click)="onOpenDescuentoModal()"
-            >
-              {{ descuento() > 0 ? 'Descuento' : 'Agregar Descuento' }}
-            </button>
-            <span [class.text-red-500]="descuento() > 0" [class.text-gray-400]="descuento() === 0">
-              {{ descuento() > 0 ? '-' : '' }} Bs. {{ descuento().toFixed(2) }}
-            </span>
-          </div>
-          <div class="flex items-center justify-between pt-1">
-            <span class="text-sm font-bold text-gray-900">Total</span>
-            <span class="text-xl font-bold text-gray-900 tracking-tight"
-              >Bs. {{ totalConDescuento().toFixed(2) }}</span
-            >
-          </div>
-
-          @if (tipoVenta() === 'CREDITO') {
-          <div class="flex items-center justify-between text-xs pt-1 border-t border-gray-100 mt-1">
-            <span class="text-gray-500">Pagado</span>
-            <span class="font-medium">Bs. {{ totalPagado().toFixed(2) }}</span>
-          </div>
-          <div class="flex items-center justify-between text-xs font-bold text-red-600">
-            <span>Saldo Pendiente</span>
-            <span>Bs. {{ saldoPendiente().toFixed(2) }}</span>
-          </div>
-          }
-        </div>
-
-        <!-- Methods & Action -->
-        <div class="space-y-3">
-          <!-- Payment Methods Grid (3 cols) -->
-          <div class="grid grid-cols-3 gap-2">
-            @for (method of ['EFECTIVO', 'QR', 'TARJETA']; track method) {
-            <button
-              type="button"
-              class="relative px-1 py-2 border text-[9px] font-bold tracking-wider transition-all rounded hover:border-primary flex flex-col items-center justify-center gap-0.5"
-              [class.bg-primary]="getPaymentAmount(method) > 0"
-              [class.text-white]="getPaymentAmount(method) > 0"
-              [class.border-primary]="getPaymentAmount(method) > 0"
-              [class.bg-white]="getPaymentAmount(method) === 0"
-              [class.text-gray-600]="getPaymentAmount(method) === 0"
-              [class.border-gray-200]="getPaymentAmount(method) === 0"
-              (click)="onSelectPayment(method)"
-            >
-              <span>{{ method }}</span>
-              @if(getPaymentAmount(method) > 0) {
-              <span class="text-[8px] opacity-90 font-normal"
-                >Bs. {{ getPaymentAmount(method).toFixed(2) }}</span
+        <div
+          class="flex-shrink-0 border-t border-gray-200 bg-white px-4 py-3 space-y-3 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]"
+        >
+          <!-- Totals -->
+          <div class="space-y-1.5 pb-2 border-b border-gray-100">
+            <div class="flex items-center justify-between text-xs">
+              <span class="text-gray-500">Subtotal</span>
+              <span class="font-medium">Bs. {{ total().toFixed(2) }}</span>
+            </div>
+            <div class="flex items-center justify-between text-xs">
+              <button
+                type="button"
+                class="text-gray-500 hover:text-black underline decoration-dashed underline-offset-2"
+                (click)="onOpenDescuentoModal()"
               >
-              } @if(getPaymentAmount(method) > 0 && splitActive()){
+                {{ descuento() > 0 ? 'Descuento' : 'Agregar Descuento' }}
+              </button>
+              <span
+                [class.text-red-500]="descuento() > 0"
+                [class.text-gray-400]="descuento() === 0"
+              >
+                {{ descuento() > 0 ? '-' : '' }} Bs. {{ descuento().toFixed(2) }}
+              </span>
+            </div>
+            <div class="flex items-center justify-between pt-1">
+              <span class="text-sm font-bold text-gray-900">Total</span>
+              <span class="text-xl font-bold text-gray-900 tracking-tight"
+                >Bs. {{ totalConDescuento().toFixed(2) }}</span
+              >
+            </div>
+
+            @if (tipoVenta() === 'CREDITO') {
               <div
-                class="absolute -top-1.5 -right-1 bg-green-500 text-white text-[8px] px-1 rounded-full leading-tight shadow-sm z-10"
+                class="flex items-center justify-between text-xs pt-1 border-t border-gray-100 mt-1"
               >
-                {{ ((getPaymentAmount(method) / totalConDescuento()) * 100).toFixed(0) }}%
+                <span class="text-gray-500">Pagado</span>
+                <span class="font-medium">Bs. {{ totalPagado().toFixed(2) }}</span>
               </div>
-              }
-            </button>
+              <div class="flex items-center justify-between text-xs font-bold text-red-600">
+                <span>Saldo Pendiente</span>
+                <span>Bs. {{ saldoPendiente().toFixed(2) }}</span>
+              </div>
             }
           </div>
 
-          <!-- Reset Payments -->
-          @if (splitActive()) {
-          <div
-            class="flex justify-between items-center bg-gray-50 px-2 py-1.5 rounded text-[10px] text-gray-500"
-          >
-            <span>Pago dividido activo</span>
+          <!-- Methods & Action -->
+          <div class="space-y-3">
+            <!-- Payment Methods Grid (3 cols) -->
+            <div class="grid grid-cols-3 gap-2">
+              @for (method of ['EFECTIVO', 'QR', 'TARJETA']; track method) {
+                <button
+                  type="button"
+                  class="relative px-1 py-2 border text-[9px] font-bold tracking-wider transition-all rounded hover:border-primary flex flex-col items-center justify-center gap-0.5"
+                  [class.bg-primary]="getPaymentAmount(method) > 0"
+                  [class.text-white]="getPaymentAmount(method) > 0"
+                  [class.border-primary]="getPaymentAmount(method) > 0"
+                  [class.bg-white]="getPaymentAmount(method) === 0"
+                  [class.text-gray-600]="getPaymentAmount(method) === 0"
+                  [class.border-gray-200]="getPaymentAmount(method) === 0"
+                  (click)="onSelectPayment(method)"
+                >
+                  <span>{{ method }}</span>
+                  @if (getPaymentAmount(method) > 0) {
+                    <span class="text-[8px] opacity-90 font-normal"
+                      >Bs. {{ getPaymentAmount(method).toFixed(2) }}</span
+                    >
+                  }
+                  @if (getPaymentAmount(method) > 0 && splitActive()) {
+                    <div
+                      class="absolute -top-1.5 -right-1 bg-green-500 text-white text-[8px] px-1 rounded-full leading-tight shadow-sm z-10"
+                    >
+                      {{ ((getPaymentAmount(method) / totalConDescuento()) * 100).toFixed(0) }}%
+                    </div>
+                  }
+                </button>
+              }
+            </div>
+
+            <!-- Reset Payments -->
+            @if (splitActive()) {
+              <div
+                class="flex justify-between items-center bg-gray-50 px-2 py-1.5 rounded text-[10px] text-gray-500"
+              >
+                <span>Pago dividido activo</span>
+                <button
+                  type="button"
+                  class="hover:text-red-600 font-medium transition-colors"
+                  (click)="ventasStore.resetPayments()"
+                >
+                  Resetear
+                </button>
+              </div>
+            }
+
+            <!-- Confirm Button -->
             <button
               type="button"
-              class="hover:text-red-600 font-medium transition-colors"
-              (click)="ventasStore.resetPayments()"
+              class="w-full px-4 py-3 bg-primary text-white text-xs md:text-sm font-bold tracking-[0.15em] hover:opacity-90 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              [disabled]="processing()"
+              (click)="onConfirmSale()"
             >
-              Resetear
+              @if (processing()) {
+                <svg
+                  class="animate-spin h-4 w-4 md:h-5 md:w-5 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    class="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    stroke-width="4"
+                  ></circle>
+                  <path
+                    class="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+              }
+              <span>{{ processing() ? 'PROCESANDO...' : 'CONFIRMAR VENTA' }}</span>
             </button>
           </div>
-          }
-
-          <!-- Confirm Button -->
-          <button
-            type="button"
-            class="w-full px-4 py-3 bg-primary text-white text-xs md:text-sm font-bold tracking-[0.15em] hover:opacity-90 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-            [disabled]="processing()"
-            (click)="onConfirmSale()"
-          >
-            @if (processing()) {
-            <svg
-              class="animate-spin h-4 w-4 md:h-5 md:w-5 text-white"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <circle
-                class="opacity-25"
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                stroke-width="4"
-              ></circle>
-              <path
-                class="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-              ></path>
-            </svg>
-            }
-            <span>{{ processing() ? 'PROCESANDO...' : 'CONFIRMAR VENTA' }}</span>
-          </button>
         </div>
-      </div>
       }
     </div>
 
     @if (showPaymentModal()) {
-    <app-payment-split-modal
-      [totalAmount]="totalConDescuento()"
-      [paymentMethod]="selectedPaymentMethod()"
-      (confirmed)="onPaymentConfirmed($event)"
-      (cancelled)="onPaymentCancelled()"
-    ></app-payment-split-modal>
-    } @if (showDescuentoModal()) {
-    <app-descuento-modal
-      [maxDescuento]="total()"
-      [descuentoInicial]="descuento()"
-      [tipoInicial]="tipoDescuentoParaModal()"
-      (confirmed)="onDescuentoConfirmed($event)"
-      (cancelled)="onDescuentoCancelled()"
-    ></app-descuento-modal>
-    } @if (showClientModal()) {
-    <app-client-selector-modal
-      (close)="onCloseClientModal()"
-      (selectCliente)="onSelectCliente($event)"
-    ></app-client-selector-modal>
-    } @if (showSecondPaymentModal()) {
-    <div
-      class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
-      (click)="onSecondPaymentCancelled()"
-    >
+      <app-payment-split-modal
+        [totalAmount]="totalConDescuento()"
+        [paymentMethod]="selectedPaymentMethod()"
+        (confirmed)="onPaymentConfirmed($event)"
+        (cancelled)="onPaymentCancelled()"
+      ></app-payment-split-modal>
+    }
+    @if (showDescuentoModal()) {
+      <app-descuento-modal
+        [maxDescuento]="total()"
+        [descuentoInicial]="descuento()"
+        [tipoInicial]="tipoDescuentoParaModal()"
+        (confirmed)="onDescuentoConfirmed($event)"
+        (cancelled)="onDescuentoCancelled()"
+      ></app-descuento-modal>
+    }
+    @if (showClientModal()) {
+      <app-client-selector-modal
+        (close)="onCloseClientModal()"
+        (selectCliente)="onSelectCliente($event)"
+      ></app-client-selector-modal>
+    }
+    @if (showSecondPaymentModal()) {
       <div
-        class="relative w-full max-w-md bg-white shadow-2xl p-8"
-        (click)="$event.stopPropagation()"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+        (click)="onSecondPaymentCancelled()"
       >
-        <button
-          type="button"
-          class="absolute top-4 right-4 text-gray-400 hover:text-black text-2xl"
-          (click)="onSecondPaymentCancelled()"
+        <div
+          class="relative w-full max-w-md bg-white shadow-2xl p-8"
+          (click)="$event.stopPropagation()"
         >
-          ×
-        </button>
+          <button
+            type="button"
+            class="absolute top-4 right-4 text-gray-400 hover:text-black text-2xl"
+            (click)="onSecondPaymentCancelled()"
+          >
+            ×
+          </button>
 
-        <div class="flex flex-col gap-6">
-          <div class="space-y-2">
-            <h3 class="text-xl font-semibold text-gray-900">Seleccionar segundo método de pago</h3>
-            <p class="text-sm text-gray-500">Seleccione el método para completar el pago</p>
-          </div>
+          <div class="flex flex-col gap-6">
+            <div class="space-y-2">
+              <h3 class="text-xl font-semibold text-gray-900">
+                Seleccionar segundo método de pago
+              </h3>
+              <p class="text-sm text-gray-500">Seleccione el método para completar el pago</p>
+            </div>
 
-          <div class="grid grid-cols-2 gap-3">
-            @if (firstPaymentMethod() !== 'EFECTIVO') {
-            <button
-              type="button"
-              class="px-4 py-3 border border-gray-300 text-sm font-semibold tracking-wider hover:bg-primary hover:text-white hover:border-primary transition-colors"
-              (click)="onSecondPaymentMethodSelected('EFECTIVO')"
-            >
-              EFECTIVO
-            </button>
-            } @if (firstPaymentMethod() !== 'QR') {
-            <button
-              type="button"
-              class="px-4 py-3 border border-gray-300 text-sm font-semibold tracking-wider hover:bg-primary hover:text-white hover:border-primary transition-colors"
-              (click)="onSecondPaymentMethodSelected('QR')"
-            >
-              QR
-            </button>
-            } @if (firstPaymentMethod() !== 'TARJETA') {
-            <button
-              type="button"
-              class="px-4 py-3 border border-gray-300 text-sm font-semibold tracking-wider hover:bg-primary hover:text-white hover:border-primary transition-colors"
-              (click)="onSecondPaymentMethodSelected('TARJETA')"
-            >
-              TARJETA
-            </button>
-            }
+            <div class="grid grid-cols-2 gap-3">
+              @if (firstPaymentMethod() !== 'EFECTIVO') {
+                <button
+                  type="button"
+                  class="px-4 py-3 border border-gray-300 text-sm font-semibold tracking-wider hover:bg-primary hover:text-white hover:border-primary transition-colors"
+                  (click)="onSecondPaymentMethodSelected('EFECTIVO')"
+                >
+                  EFECTIVO
+                </button>
+              }
+              @if (firstPaymentMethod() !== 'QR') {
+                <button
+                  type="button"
+                  class="px-4 py-3 border border-gray-300 text-sm font-semibold tracking-wider hover:bg-primary hover:text-white hover:border-primary transition-colors"
+                  (click)="onSecondPaymentMethodSelected('QR')"
+                >
+                  QR
+                </button>
+              }
+              @if (firstPaymentMethod() !== 'TARJETA') {
+                <button
+                  type="button"
+                  class="px-4 py-3 border border-gray-300 text-sm font-semibold tracking-wider hover:bg-primary hover:text-white hover:border-primary transition-colors"
+                  (click)="onSecondPaymentMethodSelected('TARJETA')"
+                >
+                  TARJETA
+                </button>
+              }
+            </div>
           </div>
         </div>
       </div>
-    </div>
     }
   `,
 })
@@ -563,7 +598,7 @@ export class CartSummaryComponent {
     const methodKey = method.toLowerCase() as 'efectivo' | 'qr' | 'tarjeta';
     if (activeCount >= 2 && currentPayments[methodKey] === 0) {
       inject(ToastService).warning(
-        'Solo se permiten 2 métodos de pago. Resetea los pagos primero.'
+        'Solo se permiten 2 métodos de pago. Resetea los pagos primero.',
       );
       return;
     }
@@ -729,6 +764,14 @@ export class CartSummaryComponent {
 
     // El store maneja el estado de processing internamente
     this.ventasStore.confirmSale();
+  }
+
+  onUpdateItemPrice(idVariante: number, newPrice: string) {
+    const price = parseFloat(newPrice);
+    if (isNaN(price) || price < 0) {
+      return;
+    }
+    this.ventasStore.updatePrice(idVariante, price);
   }
 
   resolveImageUrl(path: string | undefined | null): string {

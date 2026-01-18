@@ -73,25 +73,25 @@ import { take } from 'rxjs/operators';
 
               <!-- Dropdown Menu -->
               @if (showCategoryMenu()) {
-              <div
-                class="absolute top-full left-0 mt-2 w-40 md:w-48 bg-white shadow-xl border border-gray-100 py-2 rounded-sm z-20"
-              >
-                <button
-                  class="w-full text-left px-3 md:px-4 py-2 text-xs md:text-sm hover:bg-gray-50"
-                  (click)="selectCategory(null)"
+                <div
+                  class="absolute top-full left-0 mt-2 w-40 md:w-48 bg-white shadow-xl border border-gray-100 py-2 rounded-sm z-20"
                 >
-                  Todas
-                </button>
-                @for (cat of uniqueCategories(); track cat) {
-                <button
-                  class="w-full text-left px-3 md:px-4 py-2 text-xs md:text-sm hover:bg-gray-50"
-                  [class.font-bold]="selectedCategory() === cat"
-                  (click)="selectCategory(cat)"
-                >
-                  {{ cat }}
-                </button>
-                }
-              </div>
+                  <button
+                    class="w-full text-left px-3 md:px-4 py-2 text-xs md:text-sm hover:bg-gray-50"
+                    (click)="selectCategory(null)"
+                  >
+                    Todas
+                  </button>
+                  @for (cat of uniqueCategories(); track cat) {
+                    <button
+                      class="w-full text-left px-3 md:px-4 py-2 text-xs md:text-sm hover:bg-gray-50"
+                      [class.font-bold]="selectedCategory() === cat"
+                      (click)="selectCategory(cat)"
+                    >
+                      {{ cat }}
+                    </button>
+                  }
+                </div>
               }
             </div>
           </div>
@@ -101,36 +101,36 @@ import { take } from 'rxjs/operators';
       <!-- Grid de Productos -->
       <div class="flex-1 overflow-y-auto p-3 md:p-8">
         @if (loading()) {
-        <div class="flex items-center justify-center h-64">
-          <span class="text-gray-400 text-xs md:text-sm tracking-wider">CARGANDO...</span>
-        </div>
+          <div class="flex items-center justify-center h-64">
+            <span class="text-gray-400 text-xs md:text-sm tracking-wider">CARGANDO...</span>
+          </div>
         } @else if (filteredProducts().length === 0) {
-        <div class="flex flex-col items-center justify-center h-64 text-gray-400">
-          <span class="text-xs md:text-sm tracking-wider">NO HAY PRODUCTOS</span>
-          <button (click)="clearFilters()" class="mt-4 text-xs underline hover:text-black">
-            Limpiar filtros
-          </button>
-        </div>
+          <div class="flex flex-col items-center justify-center h-64 text-gray-400">
+            <span class="text-xs md:text-sm tracking-wider">NO HAY PRODUCTOS</span>
+            <button (click)="clearFilters()" class="mt-4 text-xs underline hover:text-black">
+              Limpiar filtros
+            </button>
+          </div>
         } @else {
-        <div
-          class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-x-3 md:gap-x-6 gap-y-6 md:gap-y-10"
-        >
-          @for (product of filteredProducts(); track product.idModelo) {
-          <app-drop-product-card
-            [product]="product"
-            (cardClick)="onProductClick($event)"
-          ></app-drop-product-card>
-          }
-        </div>
+          <div
+            class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-x-3 md:gap-x-6 gap-y-6 md:gap-y-10"
+          >
+            @for (product of filteredProducts(); track product.idModelo) {
+              <app-drop-product-card
+                [product]="product"
+                (cardClick)="onProductClick($event)"
+              ></app-drop-product-card>
+            }
+          </div>
         }
       </div>
     </div>
 
     @if (detailModalOpen() && activeProductId() !== null) {
-    <app-drop-product-detail-modal
-      [idModelo]="activeProductId()!"
-      (closed)="closeProductDetail()"
-    ></app-drop-product-detail-modal>
+      <app-drop-product-detail-modal
+        [idModelo]="activeProductId()!"
+        (closed)="closeProductDetail()"
+      ></app-drop-product-detail-modal>
     }
   `,
 })
@@ -158,7 +158,8 @@ export class DropCatalogComponent implements OnInit {
       const matchesSearch =
         !query ||
         p.nombreModelo.toLowerCase().includes(query) ||
-        p.nombreMarca.toLowerCase().includes(query);
+        p.nombreMarca.toLowerCase().includes(query) ||
+        p.codigos.some((codigo) => codigo.toLowerCase().includes(query));
 
       const matchesCategory = !category || p.nombreCategoria === category;
 

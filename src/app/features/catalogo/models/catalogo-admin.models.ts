@@ -50,6 +50,7 @@ export interface ColorModeloDTO {
   id: number;
   fotoUrl: string;
   color: ColorDTO;
+  codigo?: string; // Código del modelo-color (ahora viene de modelo_color)
   variantes?: VarianteDTO[]; // Opcional: solo viene en detalle, no en listado
 }
 
@@ -61,7 +62,6 @@ export interface ModeloDTO {
   categoria: CategoriaDTO;
   estilo: EstiloDTO;
   genero?: GeneroDTO;
-  codigo?: string;
   colores: ColorModeloDTO[];
 }
 
@@ -70,6 +70,7 @@ export interface ApiColorModeloDTO {
   id: number;
   foto_url: string;
   color: ColorDTO;
+  codigo?: string;
   variantes?: VarianteDTO[]; // Opcional: solo viene en detalle
 }
 
@@ -81,6 +82,5 @@ export interface ApiModeloDTO {
   categoria: CategoriaDTO;
   estilo: EstiloDTO;
   genero?: GeneroDTO;
-  codigo?: string;
   colores: ApiColorModeloDTO[];
 }

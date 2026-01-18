@@ -35,14 +35,16 @@ export class CatalogService {
 
   private mapToResumenPrenda(item: ApiResumenPrendaDTO): ResumenPrendaDTO {
     return {
-      idModelo: item.idModelo ?? item.id_modelo ?? 0,
-      nombreModelo: item.nombreModelo ?? item.nombre_modelo ?? '',
-      nombreMarca: item.nombreMarca ?? item.nombre_marca ?? '',
-      nombreCategoria: item.nombreCategoria ?? item.nombre_categoria ?? '',
-      fotoPortada: item.fotoPortada ?? item.foto_portada ?? '',
+      idModelo: item.id_modelo ?? item.idModelo ?? 0,
+      nombreModelo: item.nombre_modelo ?? item.nombreModelo ?? '',
+      nombreMarca: item.nombre_marca ?? item.nombreMarca ?? '',
+      nombreCategoria: item.nombre_categoria ?? item.nombreCategoria ?? '',
+      fotoPortada: item.foto_portada ?? item.fotoPortada ?? '',
       precio: item.precio ?? 0,
-      stockTotal: item.stockTotal ?? item.stock_total ?? 0,
-      pocasUnidades: item.pocasUnidades ?? item.pocas_unidades ?? false,
+      stockTotal: item.stock_total ?? item.stockTotal ?? 0,
+      pocasUnidades: item.pocas_unidades ?? item.pocasUnidades ?? false,
+      codigos: item.codigos ?? [],
+      tallas: item.tallas ?? [],
     };
   }
 
@@ -64,6 +66,7 @@ export class CatalogService {
       nombreColor: color.nombreColor ?? color.nombre_color ?? '',
       codigoHex: color.codigoHex ?? color.codigo_hex ?? '#000000',
       fotoUrl: color.fotoUrl ?? color.foto_url ?? '',
+      codigo: color.codigo ?? undefined,
       tallas: (color.tallas ?? []).map((talla) => this.mapToTalla(talla)),
     };
   }
@@ -93,6 +96,8 @@ type ApiResumenPrendaDTO = {
   stock_total?: number;
   pocasUnidades?: boolean;
   pocas_unidades?: boolean;
+  codigos?: string[];
+  tallas?: string[];
 };
 
 type ApiDetallePrendaDTO = {
@@ -119,6 +124,7 @@ type ApiColorDTO = {
   codigo_hex?: string;
   fotoUrl?: string;
   foto_url?: string;
+  codigo?: string;
   tallas?: ApiTallaDTO[];
 };
 

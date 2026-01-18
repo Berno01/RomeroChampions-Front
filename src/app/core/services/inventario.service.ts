@@ -91,7 +91,7 @@ export class InventarioService {
       colores_disponibles: detalle.colores_disponibles ?? detalle.coloresDisponibles ?? [],
       tallas_disponibles: detalle.tallas_disponibles ?? detalle.tallasDisponibles ?? [],
       sucursales: (detalle.sucursales ?? []).map((suc: any) =>
-        this.mapSucursalInventarioFromApi(suc)
+        this.mapSucursalInventarioFromApi(suc),
       ),
     };
   }
@@ -104,7 +104,7 @@ export class InventarioService {
       id_sucursal: sucursal.id_sucursal ?? sucursal.idSucursal ?? 0,
       nombre_sucursal: sucursal.nombre_sucursal ?? sucursal.nombreSucursal ?? '',
       matriz_color_talla: this.mapMatrizColorTalla(
-        sucursal.matriz_color_talla ?? sucursal.matrizColorTalla ?? {}
+        sucursal.matriz_color_talla ?? sucursal.matrizColorTalla ?? {},
       ),
     };
   }
@@ -136,6 +136,7 @@ export class InventarioService {
               id_variante: variante.id_variante ?? variante.idVariante ?? 0,
               stock: variante.stock ?? 0,
               codigo_hex_color: variante.codigo_hex_color ?? variante.codigoHexColor ?? '#000000',
+              codigo: variante.codigo ?? undefined,
             };
           } else {
             // Si no existe la combinación, dejar como undefined

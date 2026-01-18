@@ -45,15 +45,15 @@ export class CatalogoAdminService {
           categoria: modelo.categoria,
           estilo: modelo.estilo,
           genero: modelo.genero,
-          codigo: modelo.codigo,
           colores: modelo.colores.map((color) => ({
             id: color.id,
             fotoUrl: color.foto_url, // snake_case → camelCase
             color: color.color,
+            codigo: color.codigo,
             variantes: color.variantes,
           })),
-        }))
-      )
+        })),
+      ),
     );
   }
 
@@ -71,14 +71,14 @@ export class CatalogoAdminService {
         categoria: modelo.categoria,
         estilo: modelo.estilo,
         genero: modelo.genero,
-        codigo: modelo.codigo,
         colores: modelo.colores.map((color: any) => ({
           id: color.id,
           fotoUrl: color.foto_url || color.fotoUrl,
           color: color.color,
+          codigo: color.codigo,
           variantes: color.variantes,
         })),
-      }))
+      })),
     );
   }
 

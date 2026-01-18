@@ -50,25 +50,25 @@ import {
               </button>
 
               @if (showCategoriaDropdown()) {
-              <div
-                class="absolute top-full left-0 mt-2 w-48 bg-white shadow-xl border border-gray-100 py-2 rounded-sm z-20"
-              >
-                <button
-                  class="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 transition-colors"
-                  (click)="selectCategoria(null)"
+                <div
+                  class="absolute top-full left-0 mt-2 w-48 bg-white shadow-xl border border-gray-100 py-2 rounded-sm z-20"
                 >
-                  Todas
-                </button>
-                @for (cat of opciones()?.categorias || []; track cat.id) {
-                <button
-                  class="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 transition-colors"
-                  [class.font-bold]="selectedCategoria()?.id === cat.id"
-                  (click)="selectCategoria(cat)"
-                >
-                  {{ cat.nombre }}
-                </button>
-                }
-              </div>
+                  <button
+                    class="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 transition-colors"
+                    (click)="selectCategoria(null)"
+                  >
+                    Todas
+                  </button>
+                  @for (cat of opciones()?.categorias || []; track cat.id) {
+                    <button
+                      class="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 transition-colors"
+                      [class.font-bold]="selectedCategoria()?.id === cat.id"
+                      (click)="selectCategoria(cat)"
+                    >
+                      {{ cat.nombre }}
+                    </button>
+                  }
+                </div>
               }
             </div>
 
@@ -90,25 +90,25 @@ import {
               </button>
 
               @if (showMarcaDropdown()) {
-              <div
-                class="absolute top-full left-0 mt-2 w-48 bg-white shadow-xl border border-gray-100 py-2 rounded-sm z-20"
-              >
-                <button
-                  class="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 transition-colors"
-                  (click)="selectMarca(null)"
+                <div
+                  class="absolute top-full left-0 mt-2 w-48 bg-white shadow-xl border border-gray-100 py-2 rounded-sm z-20"
                 >
-                  Todas
-                </button>
-                @for (marca of opciones()?.marcas || []; track marca.id) {
-                <button
-                  class="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 transition-colors"
-                  [class.font-bold]="selectedMarca()?.id === marca.id"
-                  (click)="selectMarca(marca)"
-                >
-                  {{ marca.nombre }}
-                </button>
-                }
-              </div>
+                  <button
+                    class="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 transition-colors"
+                    (click)="selectMarca(null)"
+                  >
+                    Todas
+                  </button>
+                  @for (marca of opciones()?.marcas || []; track marca.id) {
+                    <button
+                      class="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 transition-colors"
+                      [class.font-bold]="selectedMarca()?.id === marca.id"
+                      (click)="selectMarca(marca)"
+                    >
+                      {{ marca.nombre }}
+                    </button>
+                  }
+                </div>
               }
             </div>
 
@@ -130,25 +130,25 @@ import {
               </button>
 
               @if (showEstiloDropdown()) {
-              <div
-                class="absolute top-full left-0 mt-2 w-48 bg-white shadow-xl border border-gray-100 py-2 rounded-sm z-20"
-              >
-                <button
-                  class="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 transition-colors"
-                  (click)="selectEstilo(null)"
+                <div
+                  class="absolute top-full left-0 mt-2 w-48 bg-white shadow-xl border border-gray-100 py-2 rounded-sm z-20"
                 >
-                  Todos
-                </button>
-                @for (estilo of opciones()?.estilos || []; track estilo.id) {
-                <button
-                  class="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 transition-colors"
-                  [class.font-bold]="selectedEstilo()?.id === estilo.id"
-                  (click)="selectEstilo(estilo)"
-                >
-                  {{ estilo.nombre }}
-                </button>
-                }
-              </div>
+                  <button
+                    class="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 transition-colors"
+                    (click)="selectEstilo(null)"
+                  >
+                    Todos
+                  </button>
+                  @for (estilo of opciones()?.estilos || []; track estilo.id) {
+                    <button
+                      class="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 transition-colors"
+                      [class.font-bold]="selectedEstilo()?.id === estilo.id"
+                      (click)="selectEstilo(estilo)"
+                    >
+                      {{ estilo.nombre }}
+                    </button>
+                  }
+                </div>
               }
             </div>
           </div>
@@ -205,64 +205,64 @@ import {
       <!-- Grid de Productos -->
       <main class="p-8">
         @if (loading()) {
-        <!-- Skeletons mientras cargan los datos -->
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4">
-          @for (i of [1,2,3,4,5,6,7,8,9,10]; track i) {
-          <div class="bg-white overflow-hidden animate-pulse">
-            <!-- Skeleton imagen -->
-            <div class="aspect-[4/5] bg-gray-200"></div>
-            <!-- Skeleton info -->
-            <div class="p-3 space-y-2">
-              <div class="h-2 bg-gray-200 rounded w-1/3"></div>
-              <div class="h-4 bg-gray-200 rounded w-2/3"></div>
-              <div class="h-3 bg-gray-200 rounded w-1/2"></div>
-              <div class="h-3 bg-gray-200 rounded w-1/4"></div>
-              <div class="h-6 bg-gray-200 rounded w-1/3 mt-2"></div>
-            </div>
+          <!-- Skeletons mientras cargan los datos -->
+          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4">
+            @for (i of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]; track i) {
+              <div class="bg-white overflow-hidden animate-pulse">
+                <!-- Skeleton imagen -->
+                <div class="aspect-[4/5] bg-gray-200"></div>
+                <!-- Skeleton info -->
+                <div class="p-3 space-y-2">
+                  <div class="h-2 bg-gray-200 rounded w-1/3"></div>
+                  <div class="h-4 bg-gray-200 rounded w-2/3"></div>
+                  <div class="h-3 bg-gray-200 rounded w-1/2"></div>
+                  <div class="h-3 bg-gray-200 rounded w-1/4"></div>
+                  <div class="h-6 bg-gray-200 rounded w-1/3 mt-2"></div>
+                </div>
+              </div>
+            }
           </div>
-          }
-        </div>
         } @else if (filteredModelos().length === 0) {
-        <div class="flex flex-col items-center justify-center h-64 text-gray-400">
-          <svg class="w-20 h-20 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="1.5"
-              d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
-            ></path>
-          </svg>
-          <p class="text-sm tracking-wider">NO SE ENCONTRARON MODELOS</p>
-          <button
-            (click)="clearFilters()"
-            class="mt-4 text-xs underline hover:text-black transition-colors"
-          >
-            Limpiar filtros
-          </button>
-        </div>
+          <div class="flex flex-col items-center justify-center h-64 text-gray-400">
+            <svg class="w-20 h-20 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.5"
+                d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
+              ></path>
+            </svg>
+            <p class="text-sm tracking-wider">NO SE ENCONTRARON MODELOS</p>
+            <button
+              (click)="clearFilters()"
+              class="mt-4 text-xs underline hover:text-black transition-colors"
+            >
+              Limpiar filtros
+            </button>
+          </div>
         } @else {
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4">
-          @for (modelo of filteredModelos(); track modelo.id) {
-          <app-product-card-admin
-            [modelo]="modelo"
-            (cardClick)="onEditModelo($event)"
-            (deleteClick)="onDeleteModelo($event)"
-          ></app-product-card-admin>
-          }
-        </div>
+          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4">
+            @for (modelo of filteredModelos(); track modelo.id) {
+              <app-product-card-admin
+                [modelo]="modelo"
+                (cardClick)="onEditModelo($event)"
+                (deleteClick)="onDeleteModelo($event)"
+              ></app-product-card-admin>
+            }
+          </div>
         }
       </main>
     </div>
 
     <!-- Modal Nuevo Modelo -->
     @if (showNuevoModeloModal() && opciones()) {
-    <app-nuevo-modelo-modal
-      [opciones]="opciones()!"
-      [modeloId]="editingModeloId()"
-      (closed)="closeNuevoModeloModal()"
-      (modeloCreated)="onModeloCreated()"
-      (opcionesUpdated)="onOpcionesUpdated()"
-    ></app-nuevo-modelo-modal>
+      <app-nuevo-modelo-modal
+        [opciones]="opciones()!"
+        [modeloId]="editingModeloId()"
+        (closed)="closeNuevoModeloModal()"
+        (modeloCreated)="onModeloCreated()"
+        (opcionesUpdated)="onOpcionesUpdated()"
+      ></app-nuevo-modelo-modal>
     }
   `,
 })
@@ -294,14 +294,10 @@ export class CatalogoListComponent implements OnInit {
   filteredModelos = computed(() => {
     let result = this.modelos();
 
-    // Filtrar por búsqueda de texto (Nombre o Código)
+    // Filtrar por búsqueda de texto (solo por Nombre)
     const query = this.searchQuery().toLowerCase();
     if (query) {
-      result = result.filter(
-        (m) =>
-          m.nombre.toLowerCase().includes(query) ||
-          (m.codigo && m.codigo.toLowerCase().includes(query))
-      );
+      result = result.filter((m) => m.nombre.toLowerCase().includes(query));
     }
 
     // Filtrar por categoría

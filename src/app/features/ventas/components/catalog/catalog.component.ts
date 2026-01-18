@@ -75,42 +75,69 @@ import { take } from 'rxjs/operators';
 
               <!-- Dropdown Menu Simulado -->
               @if (showCategoryMenu()) {
-              <div
-                class="absolute top-full left-0 mt-2 w-40 md:w-48 bg-white shadow-xl border border-gray-100 py-2 rounded-sm z-20"
-              >
-                <button
-                  class="w-full text-left px-3 md:px-4 py-2 text-xs md:text-sm hover:bg-gray-50"
-                  (click)="selectCategory(null)"
+                <div
+                  class="absolute top-full left-0 mt-2 w-40 md:w-48 bg-white shadow-xl border border-gray-100 py-2 rounded-sm z-20"
                 >
-                  Todas
-                </button>
-                @for (cat of uniqueCategories(); track cat) {
-                <button
-                  class="w-full text-left px-3 md:px-4 py-2 text-xs md:text-sm hover:bg-gray-50"
-                  [class.font-bold]="selectedCategory() === cat"
-                  (click)="selectCategory(cat)"
-                >
-                  {{ cat }}
-                </button>
-                }
-              </div>
+                  <button
+                    class="w-full text-left px-3 md:px-4 py-2 text-xs md:text-sm hover:bg-gray-50"
+                    (click)="selectCategory(null)"
+                  >
+                    Todas
+                  </button>
+                  @for (cat of uniqueCategories(); track cat) {
+                    <button
+                      class="w-full text-left px-3 md:px-4 py-2 text-xs md:text-sm hover:bg-gray-50"
+                      [class.font-bold]="selectedCategory() === cat"
+                      (click)="selectCategory(cat)"
+                    >
+                      {{ cat }}
+                    </button>
+                  }
+                </div>
               }
             </div>
 
-            <!-- Dropdown Tallas (Visual por ahora) -->
-            <button
-              class="flex items-center gap-1 text-[10px] md:text-xs font-bold text-gray-400 hover:text-black uppercase tracking-wider transition-colors"
-            >
-              TALLAS
-              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M19 9l-7 7-7-7"
-                ></path>
-              </svg>
-            </button>
+            <!-- Dropdown Tallas -->
+            <div class="relative group">
+              <button
+                class="flex items-center gap-1 text-[10px] md:text-xs font-bold text-gray-400 hover:text-black uppercase tracking-wider transition-colors"
+                (click)="toggleTallaMenu()"
+              >
+                <span class="hidden sm:inline">{{ selectedTalla() || 'TALLAS' }}</span>
+                <span class="sm:hidden">{{ selectedTalla() || 'TALL.' }}</span>
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M19 9l-7 7-7-7"
+                  ></path>
+                </svg>
+              </button>
+
+              <!-- Dropdown Menu -->
+              @if (showTallaMenu()) {
+                <div
+                  class="absolute top-full left-0 mt-2 w-40 md:w-48 bg-white shadow-xl border border-gray-100 py-2 rounded-sm z-20 max-h-60 overflow-y-auto"
+                >
+                  <button
+                    class="w-full text-left px-3 md:px-4 py-2 text-xs md:text-sm hover:bg-gray-50"
+                    (click)="selectTalla(null)"
+                  >
+                    Todas
+                  </button>
+                  @for (talla of uniqueTallas(); track talla) {
+                    <button
+                      class="w-full text-left px-3 md:px-4 py-2 text-xs md:text-sm hover:bg-gray-50"
+                      [class.font-bold]="selectedTalla() === talla"
+                      (click)="selectTalla(talla)"
+                    >
+                      {{ talla }}
+                    </button>
+                  }
+                </div>
+              }
+            </div>
           </div>
         </div>
       </header>
@@ -118,37 +145,37 @@ import { take } from 'rxjs/operators';
       <!-- Grid de Productos -->
       <div class="flex-1 overflow-y-auto p-3 md:p-8">
         @if (loading()) {
-        <div class="flex items-center justify-center h-64">
-          <span class="text-gray-400 text-xs md:text-sm tracking-wider">CARGANDO...</span>
-        </div>
+          <div class="flex items-center justify-center h-64">
+            <span class="text-gray-400 text-xs md:text-sm tracking-wider">CARGANDO...</span>
+          </div>
         } @else if (filteredProducts().length === 0) {
-        <div class="flex flex-col items-center justify-center h-64 text-gray-400">
-          <span class="text-xs md:text-sm tracking-wider">NO HAY PRODUCTOS</span>
-          <button (click)="clearFilters()" class="mt-4 text-xs underline hover:text-black">
-            Limpiar filtros
-          </button>
-        </div>
+          <div class="flex flex-col items-center justify-center h-64 text-gray-400">
+            <span class="text-xs md:text-sm tracking-wider">NO HAY PRODUCTOS</span>
+            <button (click)="clearFilters()" class="mt-4 text-xs underline hover:text-black">
+              Limpiar filtros
+            </button>
+          </div>
         } @else {
-        <div
-          class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-x-3 md:gap-x-6 gap-y-6 md:gap-y-10"
-        >
-          @for (product of filteredProducts(); track product.idModelo) {
-          <app-product-card
-            [product]="product"
-            (cardClick)="onProductClick($event)"
-          ></app-product-card>
-          }
-        </div>
+          <div
+            class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-x-3 md:gap-x-6 gap-y-6 md:gap-y-10"
+          >
+            @for (product of filteredProducts(); track product.idModelo) {
+              <app-product-card
+                [product]="product"
+                (cardClick)="onProductClick($event)"
+              ></app-product-card>
+            }
+          </div>
         }
       </div>
     </div>
 
     @if (detailModalOpen() && activeProductId() !== null) {
-    <app-product-detail-modal
-      [idModelo]="activeProductId()!"
-      [sucursalId]="sessionService.sucursalId()"
-      (closed)="closeProductDetail()"
-    ></app-product-detail-modal>
+      <app-product-detail-modal
+        [idModelo]="activeProductId()!"
+        [sucursalId]="sessionService.sucursalId()"
+        (closed)="closeProductDetail()"
+      ></app-product-detail-modal>
     }
   `,
 })
@@ -167,6 +194,8 @@ export class CatalogComponent {
   searchQuery = signal<string>('');
   selectedCategory = signal<string | null>(null);
   showCategoryMenu = signal<boolean>(false);
+  selectedTalla = signal<string | null>(null);
+  showTallaMenu = signal<boolean>(false);
 
   constructor() {
     // Recargar catálogo automáticamente cuando cambie la sucursal
@@ -182,22 +211,43 @@ export class CatalogComponent {
   filteredProducts = computed(() => {
     const query = this.searchQuery().toLowerCase();
     const category = this.selectedCategory();
+    const talla = this.selectedTalla();
 
     return this.products().filter((p) => {
       const matchesSearch =
         !query ||
         p.nombreModelo.toLowerCase().includes(query) ||
-        p.nombreMarca.toLowerCase().includes(query);
+        p.nombreMarca.toLowerCase().includes(query) ||
+        p.codigos.some((codigo) => codigo.toLowerCase().includes(query));
 
       const matchesCategory = !category || p.nombreCategoria === category;
 
-      return matchesSearch && matchesCategory;
+      const matchesTalla = !talla || p.tallas.includes(talla);
+
+      return matchesSearch && matchesCategory && matchesTalla;
     });
   });
 
   uniqueCategories = computed(() => {
     const categories = new Set(this.products().map((p) => p.nombreCategoria));
     return Array.from(categories).sort();
+  });
+
+  uniqueTallas = computed(() => {
+    const tallas = new Set<string>();
+    this.products().forEach((p) => p.tallas.forEach((t) => tallas.add(t)));
+    // Ordenar tallas: primero letras (S, M, L, XL), luego números
+    return Array.from(tallas).sort((a, b) => {
+      const ordenTallas = ['S', 'M', 'L', 'XL', '36', '38', '40', '42', '44', '46', '48'];
+      const indexA = ordenTallas.indexOf(a);
+      const indexB = ordenTallas.indexOf(b);
+
+      if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+      if (indexA !== -1) return -1;
+      if (indexB !== -1) return 1;
+
+      return a.localeCompare(b, undefined, { numeric: true });
+    });
   });
 
   ngOnInit() {
@@ -232,9 +282,19 @@ export class CatalogComponent {
     this.showCategoryMenu.set(false);
   }
 
+  toggleTallaMenu() {
+    this.showTallaMenu.update((v) => !v);
+  }
+
+  selectTalla(talla: string | null) {
+    this.selectedTalla.set(talla);
+    this.showTallaMenu.set(false);
+  }
+
   clearFilters() {
     this.searchQuery.set('');
     this.selectedCategory.set(null);
+    this.selectedTalla.set(null);
   }
 
   onProductClick(product: ResumenPrendaDTO) {
@@ -264,6 +324,8 @@ const MOCK_PRODUCTS: ResumenPrendaDTO[] = [
     precio: 250.0,
     stockTotal: 15,
     pocasUnidades: false,
+    codigos: ['HOOD-001', 'HOOD-001-BLK'],
+    tallas: ['S', 'M', 'L', 'XL'],
   },
   {
     idModelo: 2,
@@ -275,6 +337,8 @@ const MOCK_PRODUCTS: ResumenPrendaDTO[] = [
     precio: 120.0,
     stockTotal: 5,
     pocasUnidades: true,
+    codigos: ['TEE-002', 'TEE-002-WHT'],
+    tallas: ['M', 'L'],
   },
   {
     idModelo: 3,
@@ -286,6 +350,8 @@ const MOCK_PRODUCTS: ResumenPrendaDTO[] = [
     precio: 350.0,
     stockTotal: 0,
     pocasUnidades: false,
+    codigos: ['PANT-003'],
+    tallas: ['38', '40', '42'],
   },
   {
     idModelo: 4,
@@ -297,6 +363,8 @@ const MOCK_PRODUCTS: ResumenPrendaDTO[] = [
     precio: 80.0,
     stockTotal: 20,
     pocasUnidades: false,
+    codigos: ['CAP-004'],
+    tallas: ['Única'],
   },
   {
     idModelo: 5,
@@ -307,5 +375,7 @@ const MOCK_PRODUCTS: ResumenPrendaDTO[] = [
     precio: 450.0,
     stockTotal: 8,
     pocasUnidades: false,
+    codigos: ['FLEECE-005'],
+    tallas: ['S', 'M', 'L'],
   },
 ];

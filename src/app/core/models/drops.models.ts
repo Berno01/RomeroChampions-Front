@@ -34,6 +34,7 @@ export interface CatalogoItemDrop {
   nombreMarca: string;
   nombreCategoria: string;
   fotoPortada: string;
+  codigos: string[]; // Códigos del modelo-color
 }
 
 export interface TallaDropDetalle {

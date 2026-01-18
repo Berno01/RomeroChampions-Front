@@ -7,6 +7,8 @@ export interface ResumenPrendaDTO {
   precio: number;
   stockTotal: number;
   pocasUnidades: boolean;
+  codigos: string[]; // Códigos del modelo-color
+  tallas: string[]; // Tallas disponibles del modelo
 }
 
 export interface TallaDTO {
@@ -19,6 +21,7 @@ export interface ColorDTO {
   nombreColor: string;
   codigoHex: string;
   fotoUrl: string;
+  codigo?: string; // Código del modelo-color (ahora viene de modelo_color)
   tallas: TallaDTO[];
 }
 
@@ -29,7 +32,6 @@ export interface DetallePrendaDTO {
   nombreCategoria: string;
   nombreEstilo: string;
   nombreGenero?: string;
-  codigo?: string;
   precio: number;
   stockTotalSucursal: number;
   colores: ColorDTO[];

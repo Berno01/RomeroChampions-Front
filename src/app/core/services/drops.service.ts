@@ -161,6 +161,7 @@ export class DropsService {
       nombreMarca: item.nombreMarca ?? item.nombre_marca ?? '',
       nombreCategoria: item.nombreCategoria ?? item.nombre_categoria ?? '',
       fotoPortada: item.fotoPortada ?? item.foto_portada ?? '',
+      codigos: item.codigos ?? [],
     };
   }
 

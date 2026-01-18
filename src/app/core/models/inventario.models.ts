@@ -7,6 +7,7 @@ export interface DetalleVariante {
   id_variante: number;
   stock: number;
   codigo_hex_color: string;
+  codigo?: string; // Código del modelo-color (ahora viene de modelo_color)
 }
 
 /**
@@ -62,12 +63,13 @@ export interface InventarioDetalle {
 export function getDetalleVariante(
   matriz: MatrizColorTalla,
   color: string,
-  talla: string
+  talla: string,
 ): DetalleVariante {
   const defaultVariante: DetalleVariante = {
     id_variante: 0,
     stock: 0,
     codigo_hex_color: '#000000',
+    codigo: undefined,
   };
 
   if (!matriz || !matriz[color] || !matriz[color][talla]) {
