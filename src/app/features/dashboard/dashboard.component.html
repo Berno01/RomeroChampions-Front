@@ -275,7 +275,7 @@
     <!-- 2. Charts Row -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <!-- Top Productos -->
-      <div class="lg:col-span-2 bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+      <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
         <h3 class="text-lg font-bold text-gray-900 mb-1">Top Productos</h3>
         <p class="text-sm text-gray-500 mb-6">Los 5 más vendidos</p>
 
@@ -309,6 +309,26 @@
             </div>
           </div>
           }
+        </div>
+      </div>
+
+      <!-- Stock por Categoría -->
+      <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+        <div class="mb-6">
+          <h3 class="text-lg font-bold text-gray-900">Stock por Categoría</h3>
+          <p class="text-sm text-gray-500">Distribución actual del inventario</p>
+        </div>
+        <div id="chart-stock">
+          <apx-chart
+            [series]="stockByCategoryOptions.series"
+            [chart]="stockByCategoryOptions.chart"
+            [labels]="stockByCategoryOptions.labels"
+            [plotOptions]="stockByCategoryOptions.plotOptions"
+            [dataLabels]="stockByCategoryOptions.dataLabels"
+            [legend]="stockByCategoryOptions.legend"
+            [colors]="stockByCategoryOptions.colors"
+            [responsive]="stockByCategoryOptions.responsive"
+          ></apx-chart>
         </div>
       </div>
 

@@ -26,6 +26,12 @@ export interface DistribucionTalla {
   cantidad: number;
 }
 
+export interface StockCategoria {
+  id_categoria: number;
+  nombre_categoria: string;
+  stock_total: number;
+}
+
 export interface TopProducto {
   nombre_modelo: string;
   subtitulo: string;

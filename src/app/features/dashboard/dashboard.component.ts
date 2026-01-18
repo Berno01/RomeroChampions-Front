@@ -13,6 +13,7 @@ import {
   MetodoPago,
   DistribucionTalla,
   TopProducto,
+  StockCategoria,
   DashboardFilters,
 } from './models/dashboard.models';
 
@@ -73,6 +74,7 @@ export class DashboardComponent implements OnInit {
   metodosPago = signal<MetodoPago[]>([]);
   topProductos = signal<TopProducto[]>([]);
   distribucionTallas = signal<DistribucionTalla[]>([]);
+  stockPorCategoria = signal<StockCategoria[]>([]);
 
   // Filters
   selectedRange = signal<string>('hoy');
@@ -87,6 +89,7 @@ export class DashboardComponent implements OnInit {
   // Chart Options
   salesByHourOptions: Partial<ChartOptions> | any = {};
   salesByCategoryOptions: Partial<ChartOptions> | any = {};
+  stockByCategoryOptions: Partial<ChartOptions> | any = {};
 
   ngOnInit() {
     // Initialize with default filters
@@ -171,6 +174,7 @@ export class DashboardComponent implements OnInit {
       metodos: this.dashboardService.getMetodosPago(filters),
       tallas: this.dashboardService.getDistribucionTallas(filters),
       top: this.dashboardService.getTopProductos(filters),
+      stock: this.dashboardService.getStockPorCategoria(this.selectedSucursal() ?? undefined),
     }).subscribe({
       next: (data) => {
         this.kpis.set(data.kpis);
@@ -187,6 +191,7 @@ export class DashboardComponent implements OnInit {
 
         this.distribucionTallas.set(data.tallas);
         this.topProductos.set(data.top);
+        this.stockPorCategoria.set(data.stock);
 
         this.initCharts();
         this.isLoading.set(false);
@@ -304,6 +309,59 @@ export class DashboardComponent implements OnInit {
       grid: {
         show: false,
       },
+    };
+
+    // 3. Stock por Categoría (Pie Chart)
+    const stockLabels = this.stockPorCategoria().map((s) => s.nombre_categoria);
+    const stockQuantities = this.stockPorCategoria().map((s) => s.stock_total);
+
+    this.stockByCategoryOptions = {
+      series: stockQuantities,
+      chart: {
+        type: 'donut',
+        height: 350,
+        fontFamily: 'inherit',
+      },
+      labels: stockLabels,
+      plotOptions: {
+        pie: {
+          donut: {
+            size: '70%',
+            labels: {
+              show: true,
+              total: {
+                show: true,
+                label: 'Stock Total',
+                color: '#373d3f',
+                formatter: function (w: any) {
+                  return w.globals.seriesTotals.reduce((a: any, b: any) => {
+                    return a + b;
+                  }, 0);
+                },
+              },
+            },
+          },
+        },
+      },
+      dataLabels: {
+        enabled: false,
+      },
+      legend: {
+        position: 'bottom',
+      },
+      // Paleta de rojos/naranjas/grises que combine con el diseño
+      colors: ['#CD0001', '#E63946', '#F1FAEE', '#A8DADC', '#457B9D', '#1D3557', '#2A9D8F', '#264653', '#E9C46A', '#F4A261'],
+      responsive: [{
+        breakpoint: 480,
+        options: {
+          chart: {
+            width: 280
+          },
+          legend: {
+            position: 'bottom'
+          }
+        }
+      }]
     };
   }
 

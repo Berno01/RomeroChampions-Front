@@ -9,6 +9,7 @@ import {
   MetodoPago,
   DistribucionTalla,
   TopProducto,
+  StockCategoria,
   DashboardFilters,
 } from '../models/dashboard.models';
 
@@ -74,6 +75,17 @@ export class DashboardService {
     return this.http.get<TopProducto[]>(`${this.apiUrl}/top-productos`, {
       headers: this.getHeaders(),
       params: this.getParams(filters),
+    });
+  }
+
+  getStockPorCategoria(idSucursal?: number): Observable<StockCategoria[]> {
+    let params = new HttpParams();
+    if (idSucursal) {
+      params = params.set('idSucursal', idSucursal.toString());
+    }
+    return this.http.get<StockCategoria[]>(`${this.apiUrl}/stock/categorias`, {
+      headers: this.getHeaders(),
+      params: params,
     });
   }
 
