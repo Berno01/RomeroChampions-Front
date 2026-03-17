@@ -5,14 +5,18 @@ export interface ColorDraftDTO {
   nombreColor: string;
   codigoHex: string;
   codigo: string; // Código del modelo-color
-  photoFile: File | null;
-  previewUrl: string | null;
+  photos: Array<{
+    file: File | null;
+    url: string;
+  }>;
+  activePhotoIndex: number;
   isSelected: boolean;
 }
 
 export interface CreateModeloPayloadDTO {
   nombreModelo: string;
   precio: number;
+  costoActual?: number;
   idMarca: number;
   idCategoria: number;
   idEstilo: number;
@@ -20,6 +24,7 @@ export interface CreateModeloPayloadDTO {
   colores: Array<{
     idColor: number;
     fotoUrl: string;
+    fotos?: string[];
     codigo: string; // Código del modelo-color
   }>;
   idsTallas: number[];
@@ -28,6 +33,7 @@ export interface CreateModeloPayloadDTO {
 export interface FormDraftState {
   nombreModelo: string;
   precio: number;
+  costoActual: number;
   idMarca: number | null;
   idCategoria: number | null;
   idEstilo: number | null;

@@ -21,6 +21,7 @@ export interface ColorDTO {
   nombreColor: string;
   codigoHex: string;
   fotoUrl: string;
+  fotos?: string[];
   codigo?: string; // Código del modelo-color (ahora viene de modelo_color)
   tallas: TallaDTO[];
 }

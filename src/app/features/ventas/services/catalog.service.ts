@@ -62,10 +62,14 @@ export class CatalogService {
   }
 
   private mapToColor(color: ApiColorDTO): ColorDTO {
+    const fotos = (color.fotos ?? []).filter((url) => !!url);
+    const portada = fotos[0] ?? color.fotoUrl ?? color.foto_url ?? '';
+
     return {
       nombreColor: color.nombreColor ?? color.nombre_color ?? '',
       codigoHex: color.codigoHex ?? color.codigo_hex ?? '#000000',
-      fotoUrl: color.fotoUrl ?? color.foto_url ?? '',
+      fotoUrl: portada,
+      fotos,
       codigo: color.codigo ?? undefined,
       tallas: (color.tallas ?? []).map((talla) => this.mapToTalla(talla)),
     };
@@ -124,6 +128,7 @@ type ApiColorDTO = {
   codigo_hex?: string;
   fotoUrl?: string;
   foto_url?: string;
+  fotos?: string[];
   codigo?: string;
   tallas?: ApiTallaDTO[];
 };

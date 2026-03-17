@@ -77,6 +77,9 @@ export class VentasService {
         id_modelo: detalle.id_modelo ?? detalle.idModelo,
         cantidad: detalle.cantidad,
         precio_unitario: detalle.precio_unitario ?? detalle.precioUnitario,
+        costo_unitario: detalle.costo_unitario ?? detalle.costoUnitario,
+        ganancia_unitaria: detalle.ganancia_unitaria ?? detalle.gananciaUnitaria,
+        ganancia_total: detalle.ganancia_total ?? detalle.gananciaTotal,
         total: detalle.total,
       })),
     };

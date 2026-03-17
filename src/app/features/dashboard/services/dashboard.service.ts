@@ -1,9 +1,13 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import {
   DashboardKPIs,
+  ApiDashboardKPIs,
+  GananciaSerieItem,
+  ApiGananciaSerieItem,
   VentasPorHora,
   VentasPorCategoria,
   MetodoPago,
@@ -36,11 +40,61 @@ export class DashboardService {
     return params;
   }
 
+  private toNumber(value: number | null | undefined): number {
+    return typeof value === 'number' && Number.isFinite(value) ? value : 0;
+  }
+
+  private mapKPIs(payload: ApiDashboardKPIs): DashboardKPIs {
+    return {
+      totalVentas: this.toNumber(payload.totalVentas ?? payload.total_ventas),
+      cantidadVentas: this.toNumber(payload.cantidadVentas ?? payload.cantidad_ventas),
+      gananciaDevengada: this.toNumber(payload.gananciaDevengada ?? payload.ganancia_devengada),
+      gananciaCobrada: this.toNumber(payload.gananciaCobrada ?? payload.ganancia_cobrada),
+      gananciaPendiente: this.toNumber(payload.gananciaPendiente ?? payload.ganancia_pendiente),
+      unidadesVendidas: this.toNumber(payload.unidadesVendidas ?? payload.unidades_vendidas),
+    };
+  }
+
+  private mapGananciaSerie(items: ApiGananciaSerieItem[]): GananciaSerieItem[] {
+    return (items ?? []).map((item) => ({
+      fecha: item.fecha || '',
+      gananciaDevengada: this.toNumber(item.gananciaDevengada ?? item.ganancia_devengada),
+      gananciaCobrada: this.toNumber(item.gananciaCobrada ?? item.ganancia_cobrada),
+      gananciaPendiente: this.toNumber(item.gananciaPendiente ?? item.ganancia_pendiente),
+    }));
+  }
+
   getKPIs(filters?: DashboardFilters): Observable<DashboardKPIs> {
-    return this.http.get<DashboardKPIs>(`${this.apiUrl}/kpis`, {
-      headers: this.getHeaders(),
-      params: this.getParams(filters),
-    });
+    return this.http
+      .get<ApiDashboardKPIs>(`${this.apiUrl}/kpis`, {
+        headers: this.getHeaders(),
+        params: this.getParams(filters),
+      })
+      .pipe(map((payload) => this.mapKPIs(payload || {})));
+  }
+
+  getGananciaSerie(filters?: DashboardFilters): Observable<GananciaSerieItem[]> {
+    const params = this.getParams(filters);
+
+    return this.http
+      .get<ApiGananciaSerieItem[]>(`${this.apiUrl}/ganancias-serie`, {
+        headers: this.getHeaders(),
+        params,
+      })
+      .pipe(
+        map((items) => this.mapGananciaSerie(items || [])),
+        catchError(() =>
+          this.http
+            .get<ApiGananciaSerieItem[]>(`${this.apiUrl}/ganancias-por-periodo`, {
+              headers: this.getHeaders(),
+              params,
+            })
+            .pipe(
+              map((items) => this.mapGananciaSerie(items || [])),
+              catchError(() => of([])),
+            ),
+        ),
+      );
   }
 
   getVentasPorHora(filters?: DashboardFilters): Observable<VentasPorHora[]> {

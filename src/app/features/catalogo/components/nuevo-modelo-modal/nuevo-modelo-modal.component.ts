@@ -13,7 +13,8 @@ import { FormsModule } from '@angular/forms';
 import { CatalogoAdminService } from '../../services/catalogo-admin.service';
 import { CloudinaryService } from '../../../../core/services/cloudinary.service';
 import { ToastService } from '../../../../core/services/toast.service';
-import { forkJoin } from 'rxjs';
+import { forkJoin, of } from 'rxjs';
+import { map } from 'rxjs/operators';
 import {
   OpcionesCatalogoDTO,
   MarcaDTO,
@@ -23,7 +24,11 @@ import {
   TallaDTO,
   ColorDTO,
 } from '../../models/catalogo-admin.models';
-import { ColorDraftDTO, FormDraftState } from '../../models/create-modelo.models';
+import {
+  ColorDraftDTO,
+  CreateModeloPayloadDTO,
+  FormDraftState,
+} from '../../models/create-modelo.models';
 
 @Component({
   selector: 'app-nuevo-modelo-modal',
@@ -71,6 +76,10 @@ import { ColorDraftDTO, FormDraftState } from '../../models/create-modelo.models
               @if (activeColorPreview()) {
                 <div
                   class="w-48 md:w-64 aspect-[3/4] bg-white border-2 border-gray-200 mb-4 overflow-hidden relative group"
+                  [class.border-black]="isDragging()"
+                  (dragover)="onDragOver($event)"
+                  (dragleave)="onDragLeave($event)"
+                  (drop)="onDrop($event)"
                 >
                   <img
                     [src]="activeColorPreview()!"
@@ -95,6 +104,14 @@ import { ColorDraftDTO, FormDraftState } from '../../models/create-modelo.models
                     </svg>
                   </button>
                 </div>
+
+                <button
+                  type="button"
+                  class="mb-4 px-4 py-2 border border-gray-300 text-xs font-bold tracking-wider text-gray-700 hover:border-black hover:text-black transition-colors"
+                  (click)="fileInput.click()"
+                >
+                  + AGREGAR MÁS FOTOS
+                </button>
 
                 <!-- Input de Código para el color activo -->
                 @if (activeColorName()) {
@@ -138,7 +155,7 @@ import { ColorDraftDTO, FormDraftState } from '../../models/create-modelo.models
                   <p
                     class="text-xs md:text-sm font-bold text-gray-400 mb-2 tracking-wider text-center px-2"
                   >
-                    ARRASTRA PARA GUARDAR TU FOTO
+                    ARRASTRA PARA GUARDAR TUS FOTOS
                   </p>
                   <p class="text-xs text-gray-300">JPG, PNG, WEBP (MAX 10MB)</p>
 
@@ -159,8 +176,30 @@ import { ColorDraftDTO, FormDraftState } from '../../models/create-modelo.models
                 type="file"
                 class="hidden"
                 accept="image/jpeg,image/png,image/webp"
+                multiple
                 (change)="onFileSelected($event)"
               />
+
+              @if (activeColorPhotos().length > 0) {
+                <div class="mt-3 w-48 md:w-64">
+                  <p class="text-[10px] text-gray-400 mb-2 tracking-wider text-center">
+                    GALERÍA DEL COLOR
+                  </p>
+                  <div class="flex gap-2 overflow-x-auto pb-1 justify-center">
+                    @for (photo of activeColorPhotos(); track $index) {
+                      <button
+                        type="button"
+                        class="w-12 h-14 border-2 flex-shrink-0 overflow-hidden"
+                        [class.border-black]="activeColorPhotoIndex() === $index"
+                        [class.border-gray-200]="activeColorPhotoIndex() !== $index"
+                        (click)="setActivePhotoIndex($index)"
+                      >
+                        <img [src]="photo.url" alt="Foto" class="w-full h-full object-cover" />
+                      </button>
+                    }
+                  </div>
+                </div>
+              }
 
               <!-- Miniaturas de Colores (Navegación entre fotos) -->
               <div class="flex gap-2 md:gap-3 flex-wrap justify-center">
@@ -181,12 +220,12 @@ import { ColorDraftDTO, FormDraftState } from '../../models/create-modelo.models
                     (click)="setActiveColorForUpload(colorDraft.idColor)"
                     [title]="
                       colorDraft.nombreColor +
-                      (colorDraft.previewUrl ? ' - Foto cargada' : ' - Sin foto')
+                      (hasPhotos(colorDraft) ? ' - Fotos cargadas' : ' - Sin fotos')
                     "
                   >
-                    @if (colorDraft.previewUrl) {
+                    @if (getColorCoverUrl(colorDraft)) {
                       <img
-                        [src]="colorDraft.previewUrl"
+                        [src]="getColorCoverUrl(colorDraft)!"
                         alt="Preview"
                         class="w-full h-full object-cover"
                       />
@@ -259,6 +298,22 @@ import { ColorDraftDTO, FormDraftState } from '../../models/create-modelo.models
                   placeholder="0.00"
                   [(ngModel)]="formDraft().precio"
                   name="precio"
+                />
+              </div>
+
+              <!-- Costo Actual -->
+              <div>
+                <label class="block text-xs font-semibold tracking-[0.15em] text-gray-400 mb-2">
+                  COSTO ACTUAL (Bs.)
+                </label>
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  class="w-full border-b-2 border-gray-200 focus:border-black outline-none py-2 text-sm transition-colors"
+                  placeholder="0.00"
+                  [(ngModel)]="formDraft().costoActual"
+                  name="costoActual"
                 />
               </div>
 
@@ -768,20 +823,31 @@ export class NuevoModeloModalComponent {
         });
 
         // Preparar colores con sus fotos
-        const coloresDraft: ColorDraftDTO[] = modelo.colores.map((colorModelo) => ({
-          idColor: colorModelo.color.id,
-          nombreColor: colorModelo.color.nombre,
-          codigoHex: colorModelo.color.codigoHex,
-          codigo: colorModelo.codigo || '', // Código del modelo-color
-          photoFile: null,
-          previewUrl: colorModelo.fotoUrl, // URL de Cloudinary existente
-          isSelected: true,
-        }));
+        const coloresDraft: ColorDraftDTO[] = modelo.colores.map((colorModelo) => {
+          const fotos = this.normalizePhotoUrls(
+            colorModelo.fotos && colorModelo.fotos.length > 0
+              ? colorModelo.fotos
+              : colorModelo.fotoUrl
+                ? [colorModelo.fotoUrl]
+                : [],
+          );
+
+          return {
+            idColor: colorModelo.color.id,
+            nombreColor: colorModelo.color.nombre,
+            codigoHex: colorModelo.color.codigoHex,
+            codigo: colorModelo.codigo || '',
+            photos: fotos.map((url) => ({ file: null, url })),
+            activePhotoIndex: 0,
+            isSelected: true,
+          };
+        });
 
         // Actualizar el formulario con los datos del modelo
         this.formDraft.set({
           nombreModelo: modelo.nombre,
           precio: modelo.precio || 0,
+          costoActual: modelo.costoActual ?? 0,
           idMarca: modelo.marca.id,
           idCategoria: modelo.categoria.id,
           idEstilo: modelo.estilo.id,
@@ -804,6 +870,7 @@ export class NuevoModeloModalComponent {
   formDraft = signal<FormDraftState>({
     nombreModelo: '',
     precio: 0,
+    costoActual: 0,
     idMarca: null,
     idCategoria: null,
     idEstilo: null,
@@ -836,10 +903,20 @@ export class NuevoModeloModalComponent {
 
   // Computed
   activeColorPreview = computed(() => {
-    const activeId = this.formDraft().activeColorIdForUpload;
-    if (!activeId) return null;
-    const color = this.formDraft().coloresDraft.find((c) => c.idColor === activeId);
-    return color?.previewUrl || null;
+    const color = this.getActiveColorDraft();
+    if (!color || color.photos.length === 0) return null;
+    const safeIndex = Math.min(color.activePhotoIndex, color.photos.length - 1);
+    return color.photos[safeIndex]?.url || null;
+  });
+
+  activeColorPhotos = computed(() => {
+    const color = this.getActiveColorDraft();
+    return color?.photos ?? [];
+  });
+
+  activeColorPhotoIndex = computed(() => {
+    const color = this.getActiveColorDraft();
+    return color?.activePhotoIndex ?? 0;
   });
 
   activeColorName = computed(() => {
@@ -854,11 +931,12 @@ export class NuevoModeloModalComponent {
     return (
       draft.nombreModelo.trim() !== '' &&
       draft.precio > 0 &&
+      draft.costoActual >= 0 &&
       draft.idEstilo !== null &&
       draft.idGenero !== null &&
       draft.idCategoria !== null &&
       draft.idsTallasSelected.length > 0 &&
-      draft.coloresDraft.filter((c) => c.isSelected && (c.photoFile || c.previewUrl)).length > 0
+      draft.coloresDraft.filter((c) => c.isSelected && c.photos.length > 0).length > 0
     );
   });
 
@@ -879,54 +957,77 @@ export class NuevoModeloModalComponent {
 
     const files = event.dataTransfer?.files;
     if (files && files.length > 0) {
-      this.handleFile(files[0]);
+      this.handleFiles(Array.from(files));
     }
   }
 
   onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
-      this.handleFile(input.files[0]);
+      this.handleFiles(Array.from(input.files));
     }
+    input.value = '';
   }
 
-  private handleFile(file: File) {
+  private handleFiles(files: File[]) {
     const activeId = this.formDraft().activeColorIdForUpload;
     if (!activeId) {
       this.toastService.error('Selecciona un color primero', 3000);
       return;
     }
 
-    // Validar tipo y tamaño
-    if (!file.type.match(/image\/(jpeg|png|webp)/)) {
-      this.toastService.error('Solo se permiten JPG, PNG o WEBP', 3000);
+    const validFiles: File[] = [];
+
+    files.forEach((file) => {
+      if (!file.type.match(/image\/(jpeg|png|webp)/)) {
+        return;
+      }
+      if (file.size > 10 * 1024 * 1024) {
+        return;
+      }
+      validFiles.push(file);
+    });
+
+    if (validFiles.length === 0) {
+      this.toastService.error('Solo se permiten JPG, PNG o WEBP de hasta 10MB', 3000);
       return;
     }
 
-    if (file.size > 10 * 1024 * 1024) {
-      this.toastService.error('El archivo no debe superar 10MB', 3000);
-      return;
-    }
+    Promise.all(
+      validFiles.map((file) =>
+        this.fileToDataUrl(file).then((url) => ({
+          file,
+          url,
+          signature: this.fileSignature(file),
+        })),
+      ),
+    ).then((newPhotos) => {
+      this.formDraft.update((d) => {
+        const updatedColors = d.coloresDraft.map((color) => {
+          if (color.idColor !== activeId) {
+            return color;
+          }
 
-    // Crear preview
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const draft = this.formDraft();
-      const updatedColors = draft.coloresDraft.map((c) => {
-        if (c.idColor === activeId) {
+          const existingSignatures = new Set(
+            color.photos
+              .filter((photo) => photo.file)
+              .map((photo) => this.fileSignature(photo.file!)),
+          );
+          const dedupedPhotos = newPhotos
+            .filter((photo) => !existingSignatures.has(photo.signature))
+            .map((photo) => ({ file: photo.file, url: photo.url }));
+
+          const mergedPhotos = [...color.photos, ...dedupedPhotos];
           return {
-            ...c,
-            photoFile: file,
-            previewUrl: e.target?.result as string,
+            ...color,
+            photos: mergedPhotos,
+            activePhotoIndex: mergedPhotos.length > 0 ? mergedPhotos.length - 1 : 0,
           };
-        }
-        return c;
+        });
+
+        return { ...d, coloresDraft: updatedColors };
       });
-
-      this.formDraft.update((d) => ({ ...d, coloresDraft: updatedColors }));
-    };
-
-    reader.readAsDataURL(file);
+    });
   }
 
   // Helper para validar ID en template
@@ -945,7 +1046,7 @@ export class NuevoModeloModalComponent {
 
     if (existing) {
       // Si está seleccionado y tiene foto, pedir confirmación
-      if (existing.isSelected && existing.previewUrl) {
+      if (existing.isSelected && existing.photos.length > 0) {
         this.colorToDelete.set(color);
         this.showConfirmDeleteModal.set(true);
         return;
@@ -958,7 +1059,7 @@ export class NuevoModeloModalComponent {
       this.formDraft.update((d) => ({ ...d, coloresDraft: updated }));
 
       // Si deseleccionamos y no tiene foto, removerlo de la lista
-      if (existing.isSelected && !existing.previewUrl) {
+      if (existing.isSelected && existing.photos.length === 0) {
         this.formDraft.update((d) => ({
           ...d,
           coloresDraft: d.coloresDraft.filter((c) => c.idColor !== color.id),
@@ -972,8 +1073,8 @@ export class NuevoModeloModalComponent {
         nombreColor: color.nombre,
         codigoHex: color.codigoHex,
         codigo: '', // Código vacío inicialmente
-        photoFile: null,
-        previewUrl: null,
+        photos: [],
+        activePhotoIndex: 0,
         isSelected: true,
       };
       this.formDraft.update((d) => ({
@@ -1018,7 +1119,15 @@ export class NuevoModeloModalComponent {
 
   getColorPreviewUrl(colorId: number): string | null {
     const color = this.formDraft().coloresDraft.find((c) => c.idColor === colorId);
-    return color?.previewUrl || null;
+    return color?.photos?.[0]?.url || null;
+  }
+
+  getColorCoverUrl(colorDraft: ColorDraftDTO): string | null {
+    return colorDraft.photos?.[0]?.url || null;
+  }
+
+  hasPhotos(colorDraft: ColorDraftDTO): boolean {
+    return colorDraft.photos.length > 0;
   }
 
   isColorSelected(id: number): boolean {
@@ -1027,6 +1136,23 @@ export class NuevoModeloModalComponent {
 
   setActiveColorForUpload(id: number) {
     this.formDraft.update((d) => ({ ...d, activeColorIdForUpload: id }));
+  }
+
+  setActivePhotoIndex(index: number) {
+    const activeId = this.formDraft().activeColorIdForUpload;
+    if (!activeId) return;
+
+    this.formDraft.update((d) => ({
+      ...d,
+      coloresDraft: d.coloresDraft.map((color) =>
+        color.idColor === activeId
+          ? {
+              ...color,
+              activePhotoIndex: Math.max(0, Math.min(index, color.photos.length - 1)),
+            }
+          : color,
+      ),
+    }));
   }
 
   getActiveColorCodigo(): string {
@@ -1059,17 +1185,23 @@ export class NuevoModeloModalComponent {
     const draft = this.formDraft();
     const updatedColors = draft.coloresDraft.map((c) => {
       if (c.idColor === activeId) {
+        if (c.photos.length === 0) {
+          return c;
+        }
+
+        const safeIndex = Math.min(c.activePhotoIndex, c.photos.length - 1);
+        const updatedPhotos = c.photos.filter((_, index) => index !== safeIndex);
         return {
           ...c,
-          photoFile: null,
-          previewUrl: null,
+          photos: updatedPhotos,
+          activePhotoIndex: updatedPhotos.length === 0 ? 0 : Math.max(0, safeIndex - 1),
         };
       }
       return c;
     });
 
     this.formDraft.update((d) => ({ ...d, coloresDraft: updatedColors }));
-    this.toastService.success('Foto eliminada. Puedes subir una nueva', 3000);
+    this.toastService.success('Foto eliminada de la galería', 3000);
   }
 
   toggleTalla(id: number) {
@@ -1390,8 +1522,8 @@ export class NuevoModeloModalComponent {
                 nombreColor: nuevoColor.nombre,
                 codigoHex: nuevoColor.codigoHex,
                 codigo: '', // Código vacío inicialmente
-                photoFile: null,
-                previewUrl: null,
+                photos: [],
+                activePhotoIndex: 0,
                 isSelected: true,
               };
               this.formDraft.update((d) => ({
@@ -1421,86 +1553,60 @@ export class NuevoModeloModalComponent {
     const draft = this.formDraft();
     const idCategoria = draft.idCategoria!;
     const isEditMode = this.modeloId() !== null;
+    const selectedColors = draft.coloresDraft.filter((color) => color.isSelected);
 
-    // Separar colores en dos grupos: los que necesitan subir foto nueva y los que ya tienen foto en Cloudinary
-    const coloresConFotoNueva = draft.coloresDraft.filter(
-      (c) => c.isSelected && c.photoFile !== null,
-    );
-    const coloresConFotoExistente = draft.coloresDraft.filter(
-      (c) => c.isSelected && c.photoFile === null && c.previewUrl,
-    );
-
-    // Verificar que hay al menos un color con foto (nueva o existente)
-    if (coloresConFotoNueva.length === 0 && coloresConFotoExistente.length === 0) {
+    if (selectedColors.length === 0 || selectedColors.some((color) => color.photos.length === 0)) {
       this.saving.set(false);
-      this.toastService.error('Debes subir al menos una foto', 4000);
+      this.toastService.error('Cada color seleccionado debe tener al menos una foto', 4000);
       return;
     }
 
-    // Si hay fotos nuevas, subirlas a Cloudinary
-    if (coloresConFotoNueva.length > 0) {
-      const uploadObservables = coloresConFotoNueva.map((color) =>
-        this.cloudinaryService.uploadImage(color.photoFile!, idCategoria.toString()),
-      );
+    const uploadObservables = selectedColors.map((color) => {
+      const existingUrls = color.photos.filter((photo) => !photo.file).map((photo) => photo.url);
+      const newFiles = color.photos.filter((photo) => photo.file).map((photo) => photo.file!);
 
-      forkJoin(uploadObservables).subscribe({
-        next: (cloudinaryUrls) => {
-          // Mapear las URLs de Cloudinary recién subidas
-          const coloresNuevosPayload = coloresConFotoNueva.map((color, index) => ({
-            idColor: color.idColor,
-            fotoUrl: cloudinaryUrls[index],
-          }));
+      if (newFiles.length === 0) {
+        return of(this.normalizePhotoUrls(existingUrls));
+      }
 
-          // Mapear los colores con fotos existentes (usar previewUrl que ya es Cloudinary URL)
-          const coloresExistentesPayload = coloresConFotoExistente.map((color) => ({
-            idColor: color.idColor,
-            fotoUrl: color.previewUrl!,
-          }));
+      return forkJoin(
+        newFiles.map((file) => this.cloudinaryService.uploadImage(file, idCategoria.toString())),
+      ).pipe(map((uploadedUrls) => this.normalizePhotoUrls([...existingUrls, ...uploadedUrls])));
+    });
 
-          // Combinar ambos grupos
-          const coloresPayload = [...coloresNuevosPayload, ...coloresExistentesPayload];
+    forkJoin(uploadObservables).subscribe({
+      next: (uploadedPhotosByColor) => {
+        const coloresPayload = selectedColors.map((color, index) => ({
+          idColor: color.idColor,
+          fotoUrl: uploadedPhotosByColor[index][0] || '',
+          fotos: uploadedPhotosByColor[index],
+          codigo: color.codigo || '',
+        }));
 
-          this.saveModeloToBackend(coloresPayload, draft, isEditMode);
-        },
-        error: (err) => {
-          this.saving.set(false);
-          console.error('Error al subir imágenes a Cloudinary:', err);
-          this.toastService.error('Error al subir las imágenes', 4000);
-        },
-      });
-    } else {
-      // No hay fotos nuevas, solo usar las existentes
-      const coloresPayload = coloresConFotoExistente.map((color) => ({
-        idColor: color.idColor,
-        fotoUrl: color.previewUrl!,
-      }));
-
-      this.saveModeloToBackend(coloresPayload, draft, isEditMode);
-    }
+        this.saveModeloToBackend(coloresPayload, draft, isEditMode);
+      },
+      error: (err) => {
+        this.saving.set(false);
+        console.error('Error al subir imágenes a Cloudinary:', err);
+        this.toastService.error('Error al subir las imágenes', 4000);
+      },
+    });
   }
 
   private saveModeloToBackend(
-    coloresPayload: { idColor: number; fotoUrl: string }[],
+    coloresPayload: CreateModeloPayloadDTO['colores'],
     draft: FormDraftState,
     isEditMode: boolean,
   ) {
-    // Agregar el código a cada color en el payload
-    const coloresConCodigo = coloresPayload.map((colorPayload) => {
-      const colorDraft = draft.coloresDraft.find((c) => c.idColor === colorPayload.idColor);
-      return {
-        ...colorPayload,
-        codigo: colorDraft?.codigo || '', // Incluir el código del color
-      };
-    });
-
-    const payload = {
+    const payload: CreateModeloPayloadDTO = {
       nombreModelo: draft.nombreModelo,
       precio: draft.precio,
+      costoActual: draft.costoActual,
       idMarca: draft.idMarca!,
       idCategoria: draft.idCategoria!,
       idEstilo: draft.idEstilo!,
       idGenero: draft.idGenero!,
-      colores: coloresConCodigo,
+      colores: coloresPayload,
       idsTallas: draft.idsTallasSelected,
     };
 
@@ -1527,6 +1633,30 @@ export class NuevoModeloModalComponent {
         );
       },
     });
+  }
+
+  private getActiveColorDraft(): ColorDraftDTO | undefined {
+    const activeId = this.formDraft().activeColorIdForUpload;
+    if (!activeId) return undefined;
+    return this.formDraft().coloresDraft.find((color) => color.idColor === activeId);
+  }
+
+  private normalizePhotoUrls(urls: string[]): string[] {
+    const cleaned = urls.map((url) => url.trim()).filter((url) => url.length > 0);
+    return Array.from(new Set(cleaned));
+  }
+
+  private fileToDataUrl(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (event) => resolve((event.target?.result as string) || '');
+      reader.onerror = () => reject(reader.error);
+      reader.readAsDataURL(file);
+    });
+  }
+
+  private fileSignature(file: File): string {
+    return `${file.name}-${file.size}-${file.lastModified}`;
   }
 
   onClose() {

@@ -3,6 +3,9 @@ export interface DetalleVentaDTO {
   id_modelo?: number; // Viene del backend al consultar una venta
   cantidad: number;
   precio_unitario: number;
+  costo_unitario?: number;
+  ganancia_unitaria?: number;
+  ganancia_total?: number;
   total: number;
 }
 

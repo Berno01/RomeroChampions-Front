@@ -48,7 +48,8 @@ export interface VarianteDTO {
 
 export interface ColorModeloDTO {
   id: number;
-  fotoUrl: string;
+  fotoUrl?: string;
+  fotos?: string[];
   color: ColorDTO;
   codigo?: string; // Código del modelo-color (ahora viene de modelo_color)
   variantes?: VarianteDTO[]; // Opcional: solo viene en detalle, no en listado
@@ -58,6 +59,7 @@ export interface ModeloDTO {
   id: number;
   nombre: string;
   precio: number;
+  costoActual?: number;
   marca: MarcaDTO;
   categoria: CategoriaDTO;
   estilo: EstiloDTO;
@@ -68,7 +70,9 @@ export interface ModeloDTO {
 // Mapeo de snake_case a camelCase
 export interface ApiColorModeloDTO {
   id: number;
-  foto_url: string;
+  foto_url?: string;
+  fotoUrl?: string;
+  fotos?: string[];
   color: ColorDTO;
   codigo?: string;
   variantes?: VarianteDTO[]; // Opcional: solo viene en detalle
@@ -78,6 +82,8 @@ export interface ApiModeloDTO {
   id: number;
   nombre: string;
   precio: number;
+  costoActual?: number;
+  costo_actual?: number;
   marca: MarcaDTO;
   categoria: CategoriaDTO;
   estilo: EstiloDTO;

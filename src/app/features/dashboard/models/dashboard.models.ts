@@ -1,8 +1,42 @@
 export interface DashboardKPIs {
-  total_ventas: number;
-  cantidad_ventas: number;
-  ticket_promedio: number;
-  unidades_vendidas: number;
+  totalVentas: number;
+  cantidadVentas: number;
+  gananciaDevengada: number;
+  gananciaCobrada: number;
+  gananciaPendiente: number;
+  unidadesVendidas: number;
+}
+
+export interface ApiDashboardKPIs {
+  totalVentas?: number;
+  total_ventas?: number;
+  cantidadVentas?: number;
+  cantidad_ventas?: number;
+  gananciaDevengada?: number;
+  ganancia_devengada?: number;
+  gananciaCobrada?: number;
+  ganancia_cobrada?: number;
+  gananciaPendiente?: number;
+  ganancia_pendiente?: number;
+  unidadesVendidas?: number;
+  unidades_vendidas?: number;
+}
+
+export interface GananciaSerieItem {
+  fecha: string;
+  gananciaDevengada: number;
+  gananciaCobrada: number;
+  gananciaPendiente: number;
+}
+
+export interface ApiGananciaSerieItem {
+  fecha?: string;
+  gananciaDevengada?: number;
+  ganancia_devengada?: number;
+  gananciaCobrada?: number;
+  ganancia_cobrada?: number;
+  gananciaPendiente?: number;
+  ganancia_pendiente?: number;
 }
 
 export interface VentasPorHora {

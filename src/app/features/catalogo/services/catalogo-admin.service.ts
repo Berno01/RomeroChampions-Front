@@ -22,6 +22,11 @@ export class CatalogoAdminService {
   private http = inject(HttpClient);
   private apiUrl = environment.apiUrl;
 
+  private normalizeFotos(fotos?: Array<string | undefined>, fotoUrl?: string): string[] {
+    const merged = fotos && fotos.length > 0 ? fotos : fotoUrl ? [fotoUrl] : [];
+    return merged.map((url) => (url ?? '').trim()).filter((url) => url.length > 0);
+  }
+
   /**
    * GET /api/catalogo/opciones
    * Obtiene todas las opciones para los filtros (marcas, categorías, cortes, etc.)
@@ -41,13 +46,19 @@ export class CatalogoAdminService {
           id: modelo.id,
           nombre: modelo.nombre,
           precio: modelo.precio || 0,
+          costoActual: modelo.costoActual ?? modelo.costo_actual ?? 0,
           marca: modelo.marca,
           categoria: modelo.categoria,
           estilo: modelo.estilo,
           genero: modelo.genero,
           colores: modelo.colores.map((color) => ({
+            fotos: this.normalizeFotos(color.fotos, color.foto_url || color.fotoUrl),
             id: color.id,
-            fotoUrl: color.foto_url, // snake_case → camelCase
+            fotoUrl:
+              this.normalizeFotos(color.fotos, color.foto_url || color.fotoUrl)[0] ||
+              color.foto_url ||
+              color.fotoUrl ||
+              '',
             color: color.color,
             codigo: color.codigo,
             variantes: color.variantes,
@@ -67,13 +78,19 @@ export class CatalogoAdminService {
         id: modelo.id,
         nombre: modelo.nombre,
         precio: modelo.precio || 0,
+        costoActual: modelo.costoActual ?? modelo.costo_actual ?? 0,
         marca: modelo.marca,
         categoria: modelo.categoria,
         estilo: modelo.estilo,
         genero: modelo.genero,
         colores: modelo.colores.map((color: any) => ({
+          fotos: this.normalizeFotos(color.fotos, color.foto_url || color.fotoUrl),
           id: color.id,
-          fotoUrl: color.foto_url || color.fotoUrl,
+          fotoUrl:
+            this.normalizeFotos(color.fotos, color.foto_url || color.fotoUrl)[0] ||
+            color.foto_url ||
+            color.fotoUrl ||
+            '',
           color: color.color,
           codigo: color.codigo,
           variantes: color.variantes,
