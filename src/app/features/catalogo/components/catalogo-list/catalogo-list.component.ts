@@ -174,7 +174,7 @@ import {
               </svg>
               <input
                 type="text"
-                placeholder="BUSCAR MODELO..."
+                placeholder="BUSCAR MODELO O CÓDIGO..."
                 class="w-full text-xs md:text-sm outline-none placeholder-gray-300 font-medium uppercase bg-transparent"
                 [ngModel]="searchQuery()"
                 (ngModelChange)="searchQuery.set($event)"
@@ -294,10 +294,41 @@ export class CatalogoListComponent implements OnInit {
   filteredModelos = computed(() => {
     let result = this.modelos();
 
-    // Filtrar por búsqueda de texto (solo por Nombre)
-    const query = this.searchQuery().toLowerCase();
+    // Filtrar por búsqueda de texto (nombre de modelo y código por color)
+    const normalize = (value: string) =>
+      (value || '')
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9]/g, '');
+
+    const query = normalize(this.searchQuery().trim());
+
     if (query) {
-      result = result.filter((m) => m.nombre.toLowerCase().includes(query));
+      result = result.filter((m) => {
+        const searchableValues: string[] = [m.nombre || ''];
+
+        (m.colores || []).forEach((colorModelo: any) => {
+          searchableValues.push(colorModelo.codigo || '');
+          searchableValues.push(colorModelo.codigoColor || '');
+          searchableValues.push(colorModelo.codigo_color || '');
+          searchableValues.push(colorModelo.codigoModeloColor || '');
+          searchableValues.push(colorModelo.codigo_modelo_color || '');
+          searchableValues.push(colorModelo.color?.codigo || '');
+          searchableValues.push(colorModelo.color?.codigoColor || '');
+          searchableValues.push(colorModelo.color?.codigo_color || '');
+        });
+
+        // Fallback robusto: busca también sobre el JSON completo de colores
+        // por si el backend cambia nombres de campo de código.
+        searchableValues.push(JSON.stringify(m.colores || []));
+
+        return searchableValues.some((value) => normalize(value).includes(query));
+      });
+
+      // Cuando hay texto de búsqueda, priorizamos búsqueda global rápida.
+      // Evita que filtros de dropdown activos oculten resultados por código.
+      return result;
     }
 
     // Filtrar por categoría

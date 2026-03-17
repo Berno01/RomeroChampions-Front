@@ -15,7 +15,12 @@
               (click)="toggleDatePicker()"
               class="flex items-center gap-2 bg-white border border-slate-300 text-slate-700 py-2 px-4 rounded-lg text-sm font-medium hover:bg-slate-50 transition-colors"
             >
-              <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg
+                class="w-4 h-4 text-slate-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
                 <path
                   stroke-linecap="round"
                   stroke-linejoin="round"
@@ -24,7 +29,12 @@
                 ></path>
               </svg>
               {{ dateLabel() }}
-              <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg
+                class="w-4 h-4 text-slate-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
                 <path
                   stroke-linecap="round"
                   stroke-linejoin="round"
@@ -35,7 +45,9 @@
             </button>
 
             @if (showDatePicker()) {
-              <div class="absolute right-0 mt-2 w-72 bg-white rounded-xl shadow-lg border border-slate-100 p-4 z-50">
+              <div
+                class="absolute right-0 mt-2 w-72 bg-white rounded-xl shadow-lg border border-slate-100 p-4 z-50"
+              >
                 <div class="space-y-2 mb-4">
                   <button
                     (click)="selectQuickRange('hoy')"
@@ -101,9 +113,17 @@
                 <option [ngValue]="1">Central</option>
                 <option [ngValue]="2">Secundaria</option>
               </select>
-              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-700">
-                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                  <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+              <div
+                class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-700"
+              >
+                <svg
+                  class="fill-current h-4 w-4"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"
+                  />
                 </svg>
               </div>
             </div>
@@ -131,7 +151,9 @@
       </div>
     } @else if (!hasAnyData()) {
       <div class="bg-white border border-slate-200 rounded-2xl p-10 text-center">
-        <div class="mx-auto w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mb-4">
+        <div
+          class="mx-auto w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mb-4"
+        >
           <svg class="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               stroke-linecap="round"
@@ -148,30 +170,60 @@
       </div>
     } @else {
       <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-        <div class="rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-50 to-white p-6 shadow-sm">
+        <div
+          class="rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-50 to-white p-6 shadow-sm"
+        >
           <div class="flex items-start justify-between">
-            <p class="text-xs font-semibold uppercase tracking-[0.16em] text-blue-700">Ganancia Devengada</p>
-            <span class="text-xs text-blue-700 bg-blue-100 px-2 py-1 rounded" [title]="kpiHint('devengada')">i</span>
+            <p class="text-xs font-semibold uppercase tracking-[0.16em] text-blue-700">
+              Ganancia Devengada
+            </p>
+            <span
+              class="text-xs text-blue-700 bg-blue-100 px-2 py-1 rounded"
+              [title]="kpiHint('devengada')"
+              >i</span
+            >
           </div>
-          <p class="text-3xl font-bold text-slate-900 mt-3">{{ formatCurrency(kpis()?.gananciaDevengada) }}</p>
+          <p class="text-3xl font-bold text-slate-900 mt-3">
+            {{ formatCurrency(kpis()?.gananciaDevengada) }}
+          </p>
           <p class="text-xs text-slate-500 mt-2">Ganancia generada por ventas activas.</p>
         </div>
 
-        <div class="rounded-2xl border border-emerald-100 bg-gradient-to-br from-emerald-50 to-white p-6 shadow-sm">
+        <div
+          class="rounded-2xl border border-emerald-100 bg-gradient-to-br from-emerald-50 to-white p-6 shadow-sm"
+        >
           <div class="flex items-start justify-between">
-            <p class="text-xs font-semibold uppercase tracking-[0.16em] text-emerald-700">Ganancia Cobrada</p>
-            <span class="text-xs text-emerald-700 bg-emerald-100 px-2 py-1 rounded" [title]="kpiHint('cobrada')">i</span>
+            <p class="text-xs font-semibold uppercase tracking-[0.16em] text-emerald-700">
+              Ganancia Cobrada
+            </p>
+            <span
+              class="text-xs text-emerald-700 bg-emerald-100 px-2 py-1 rounded"
+              [title]="kpiHint('cobrada')"
+              >i</span
+            >
           </div>
-          <p class="text-3xl font-bold text-slate-900 mt-3">{{ formatCurrency(kpis()?.gananciaCobrada) }}</p>
+          <p class="text-3xl font-bold text-slate-900 mt-3">
+            {{ formatCurrency(kpis()?.gananciaCobrada) }}
+          </p>
           <p class="text-xs text-slate-500 mt-2">Ganancia efectivamente cobrada.</p>
         </div>
 
-        <div class="rounded-2xl border border-amber-100 bg-gradient-to-br from-amber-50 to-white p-6 shadow-sm">
+        <div
+          class="rounded-2xl border border-amber-100 bg-gradient-to-br from-amber-50 to-white p-6 shadow-sm"
+        >
           <div class="flex items-start justify-between">
-            <p class="text-xs font-semibold uppercase tracking-[0.16em] text-amber-700">Ganancia Pendiente</p>
-            <span class="text-xs text-amber-700 bg-amber-100 px-2 py-1 rounded" [title]="kpiHint('pendiente')">i</span>
+            <p class="text-xs font-semibold uppercase tracking-[0.16em] text-amber-700">
+              Ganancia Pendiente
+            </p>
+            <span
+              class="text-xs text-amber-700 bg-amber-100 px-2 py-1 rounded"
+              [title]="kpiHint('pendiente')"
+              >i</span
+            >
           </div>
-          <p class="text-3xl font-bold text-slate-900 mt-3">{{ formatCurrency(kpis()?.gananciaPendiente) }}</p>
+          <p class="text-3xl font-bold text-slate-900 mt-3">
+            {{ formatCurrency(kpis()?.gananciaPendiente) }}
+          </p>
           <p class="text-xs text-slate-500 mt-2">Ganancia pendiente de cobro en creditos.</p>
         </div>
       </div>
@@ -179,15 +231,21 @@
       <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
         <div class="bg-white border border-slate-200 rounded-xl p-4">
           <p class="text-xs uppercase tracking-[0.14em] text-slate-500">Total Ventas</p>
-          <p class="text-2xl font-semibold text-slate-900 mt-1">{{ formatCurrency(kpis()?.totalVentas) }}</p>
+          <p class="text-2xl font-semibold text-slate-900 mt-1">
+            {{ formatCurrency(kpis()?.totalVentas) }}
+          </p>
         </div>
         <div class="bg-white border border-slate-200 rounded-xl p-4">
           <p class="text-xs uppercase tracking-[0.14em] text-slate-500">Cantidad de Ventas</p>
-          <p class="text-2xl font-semibold text-slate-900 mt-1">{{ safeNumber(kpis()?.cantidadVentas) }}</p>
+          <p class="text-2xl font-semibold text-slate-900 mt-1">
+            {{ safeNumber(kpis()?.cantidadVentas) }}
+          </p>
         </div>
         <div class="bg-white border border-slate-200 rounded-xl p-4">
           <p class="text-xs uppercase tracking-[0.14em] text-slate-500">Unidades Vendidas</p>
-          <p class="text-2xl font-semibold text-slate-900 mt-1">{{ safeNumber(kpis()?.unidadesVendidas) }}</p>
+          <p class="text-2xl font-semibold text-slate-900 mt-1">
+            {{ safeNumber(kpis()?.unidadesVendidas) }}
+          </p>
         </div>
       </div>
 
@@ -196,9 +254,13 @@
           <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-4">
             <div>
               <h3 class="text-lg font-bold text-slate-900">Evolucion de Ganancia</h3>
-              <p class="text-sm text-slate-500">Barras apiladas de cobrada y pendiente, con linea de devengada.</p>
+              <p class="text-sm text-slate-500">
+                Barras apiladas de cobrada y pendiente, con linea de devengada.
+              </p>
             </div>
-            <span class="text-xs px-3 py-1 rounded-full bg-slate-100 text-slate-600">{{ daysInRange() > 35 ? 'Vista semanal' : 'Vista diaria' }}</span>
+            <span class="text-xs px-3 py-1 rounded-full bg-slate-100 text-slate-600">{{
+              daysInRange() > 35 ? 'Vista semanal' : 'Vista diaria'
+            }}</span>
           </div>
           <apx-chart
             [series]="financialTrendOptions.series"
@@ -217,7 +279,9 @@
 
         <section class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex flex-col">
           <h3 class="text-lg font-bold text-slate-900">Composicion de Cobranza</h3>
-          <p class="text-sm text-slate-500 mb-2">Cobrada vs pendiente sobre la ganancia devengada.</p>
+          <p class="text-sm text-slate-500 mb-2">
+            Cobrada vs pendiente sobre la ganancia devengada.
+          </p>
 
           <apx-chart
             [series]="cobranzaDonutOptions.series"
@@ -231,9 +295,18 @@
           ></apx-chart>
 
           <div class="mt-2 rounded-xl bg-slate-50 border border-slate-200 p-4 space-y-2">
-            <p class="text-sm text-slate-700"><span class="font-semibold text-blue-700">Devengada:</span> ganancia generada por ventas activas.</p>
-            <p class="text-sm text-slate-700"><span class="font-semibold text-emerald-700">Cobrada:</span> ganancia efectivamente cobrada.</p>
-            <p class="text-sm text-slate-700"><span class="font-semibold text-amber-700">Pendiente:</span> ganancia pendiente de cobro en creditos.</p>
+            <p class="text-sm text-slate-700">
+              <span class="font-semibold text-blue-700">Devengada:</span> ganancia generada por
+              ventas activas.
+            </p>
+            <p class="text-sm text-slate-700">
+              <span class="font-semibold text-emerald-700">Cobrada:</span> ganancia efectivamente
+              cobrada.
+            </p>
+            <p class="text-sm text-slate-700">
+              <span class="font-semibold text-amber-700">Pendiente:</span> ganancia pendiente de
+              cobro en creditos.
+            </p>
           </div>
         </section>
       </div>
@@ -251,13 +324,23 @@
 
             <div class="space-y-4">
               @for (prod of topProductos(); track prod.nombre_modelo; let i = $index) {
-                <div class="flex items-center gap-4 p-2 hover:bg-slate-50 rounded-lg transition-colors">
-                  <div class="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-sm font-bold">
+                <div
+                  class="flex items-center gap-4 p-2 hover:bg-slate-50 rounded-lg transition-colors"
+                >
+                  <div
+                    class="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-sm font-bold"
+                  >
                     {{ i + 1 }}
                   </div>
-                  <img [src]="getSafeImage(prod.foto_url)" alt="" class="w-12 h-12 rounded-lg object-cover bg-slate-100" />
+                  <img
+                    [src]="getSafeImage(prod.foto_url)"
+                    alt=""
+                    class="w-12 h-12 rounded-lg object-cover bg-slate-100"
+                  />
                   <div class="flex-1 min-w-0">
-                    <p class="text-base font-bold text-slate-900 truncate">{{ prod.nombre_modelo }}</p>
+                    <p class="text-base font-bold text-slate-900 truncate">
+                      {{ prod.nombre_modelo }}
+                    </p>
                     <p class="text-sm text-slate-500 truncate">{{ prod.subtitulo }}</p>
                   </div>
                   <div class="text-right">
@@ -265,7 +348,9 @@
                       {{ prod.cantidad_vendida }}
                       <span class="text-xs font-normal text-slate-500">un.</span>
                     </p>
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800">
+                    <span
+                      class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800"
+                    >
                       Stock: {{ prod.stock_actual }}
                     </span>
                   </div>
@@ -296,7 +381,9 @@
           <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-100">
             <div class="mb-6">
               <h3 class="text-lg font-bold text-slate-900">Ventas por Categoria</h3>
-              <p class="text-sm text-slate-500">Total: {{ safeNumber(kpis()?.unidadesVendidas) }} unidades</p>
+              <p class="text-sm text-slate-500">
+                Total: {{ safeNumber(kpis()?.unidadesVendidas) }} unidades
+              </p>
             </div>
             <div id="chart-categories">
               <apx-chart
@@ -339,7 +426,10 @@
                     <span class="text-slate-900">{{ metodo.porcentaje }}%</span>
                   </div>
                   <div class="w-full bg-slate-100 rounded-full h-2">
-                    <div class="bg-primary h-2 rounded-full" [style.width.%]="metodo.porcentaje"></div>
+                    <div
+                      class="bg-primary h-2 rounded-full"
+                      [style.width.%]="metodo.porcentaje"
+                    ></div>
                   </div>
                 </div>
               }
@@ -368,8 +458,11 @@
       </section>
 
       @if (loadFailed()) {
-        <div class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-          Algunos datos no pudieron cargarse por completo. Se muestran valores seguros con fallback en 0.
+        <div
+          class="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800"
+        >
+          Algunos datos no pudieron cargarse por completo. Se muestran valores seguros con fallback
+          en 0.
         </div>
       }
     }

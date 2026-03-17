@@ -318,7 +318,9 @@ export class DashboardComponent implements OnInit {
 
   private initOperationalCharts() {
     const fullHours = Array.from({ length: 24 }, (_, i) => i);
-    const salesMap = new Map(this.ventasPorHora().map((item) => [item.hora, this.safeNumber(item.cantidad)]));
+    const salesMap = new Map(
+      this.ventasPorHora().map((item) => [item.hora, this.safeNumber(item.cantidad)]),
+    );
 
     this.salesByHourOptions = {
       series: [
