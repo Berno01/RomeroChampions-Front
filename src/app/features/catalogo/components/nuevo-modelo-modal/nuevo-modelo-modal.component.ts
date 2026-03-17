@@ -271,52 +271,6 @@ import {
             </h1>
 
             <form class="space-y-4 md:space-y-6">
-              <!-- Nombre del Modelo -->
-              <div>
-                <label class="block text-xs font-semibold tracking-[0.15em] text-gray-400 mb-2">
-                  NOMBRE DEL MODELO
-                </label>
-                <input
-                  type="text"
-                  class="w-full border-b-2 border-gray-200 focus:border-black outline-none py-2 text-sm transition-colors"
-                  placeholder="Ingresa el nombre"
-                  [(ngModel)]="formDraft().nombreModelo"
-                  name="nombreModelo"
-                />
-              </div>
-
-              <!-- Precio -->
-              <div>
-                <label class="block text-xs font-semibold tracking-[0.15em] text-gray-400 mb-2">
-                  PRECIO (Bs.)
-                </label>
-                <input
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  class="w-full border-b-2 border-gray-200 focus:border-black outline-none py-2 text-sm transition-colors"
-                  placeholder="0.00"
-                  [(ngModel)]="formDraft().precio"
-                  name="precio"
-                />
-              </div>
-
-              <!-- Costo Actual -->
-              <div>
-                <label class="block text-xs font-semibold tracking-[0.15em] text-gray-400 mb-2">
-                  COSTO ACTUAL (Bs.)
-                </label>
-                <input
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  class="w-full border-b-2 border-gray-200 focus:border-black outline-none py-2 text-sm transition-colors"
-                  placeholder="0.00"
-                  [(ngModel)]="formDraft().costoActual"
-                  name="costoActual"
-                />
-              </div>
-
               <!-- Marca -->
               <div>
                 <label class="block text-xs font-semibold tracking-[0.15em] text-gray-400 mb-2">
@@ -356,6 +310,124 @@ import {
                   }
                 </div>
               </div>
+
+
+
+              <!-- Nombre del Modelo -->
+              <div>
+                <label class="block text-xs font-semibold tracking-[0.15em] text-gray-400 mb-2">
+                  NOMBRE DEL MODELO
+                </label>
+                <input
+                  type="text"
+                  class="w-full border-b-2 border-gray-200 focus:border-black outline-none py-2 text-sm transition-colors"
+                  placeholder="Ingresa el nombre"
+                  [(ngModel)]="formDraft().nombreModelo"
+                  name="nombreModelo"
+                />
+              </div>
+
+              <!-- Colores Disponibles -->
+              <div>
+                <label class="block text-xs font-semibold tracking-[0.15em] text-gray-400 mb-3">
+                  COLORES DISPONIBLES
+                </label>
+                <div class="flex gap-3 items-center flex-wrap">
+                  @for (color of opciones().colores; track color.id) {
+                    <div class="relative group">
+                      <button
+                        type="button"
+                        class="w-10 h-10 rounded-full border-4 transition-all relative"
+                        [style.background-color]="color.codigoHex"
+                        [class.border-black]="isColorSelected(color.id)"
+                        [class.border-transparent]="!isColorSelected(color.id)"
+                        (click)="toggleColor(color)"
+                        [title]="color.nombre + ' (' + color.codigoHex + ')'"
+                      >
+                        @if (isColorSelected(color.id)) {
+                          <svg
+                            class="absolute inset-0 m-auto w-5 h-5 text-white drop-shadow-md"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                          >
+                            <path
+                              fill-rule="evenodd"
+                              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                              clip-rule="evenodd"
+                            ></path>
+                          </svg>
+                        }
+                      </button>
+                      <button
+                        type="button"
+                        class="absolute -top-2 -right-2 bg-white rounded-full p-1 shadow-md opacity-0 group-hover:opacity-100 transition-opacity text-gray-500 hover:text-black z-10"
+                        (click)="$event.stopPropagation(); onEditColor(color.id)"
+                        title="Editar color"
+                      >
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                          ></path>
+                        </svg>
+                      </button>
+                    </div>
+                  }
+
+                  <!-- Botón + para agregar color -->
+                  <button
+                    type="button"
+                    class="w-10 h-10 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-400 hover:border-black hover:text-black transition-all"
+                    (click)="onCreateColor()"
+                  >
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M12 4v16m8-8H4"
+                      ></path>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+
+              <!-- Costo Actual -->
+              <div>
+                <label class="block text-xs font-semibold tracking-[0.15em] text-gray-400 mb-2">
+                  COSTO ACTUAL (Bs.)
+                </label>
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  class="w-full border-b-2 border-gray-200 focus:border-black outline-none py-2 text-sm transition-colors"
+                  placeholder="0.00"
+                  [(ngModel)]="formDraft().costoActual"
+                  name="costoActual"
+                />
+              </div>
+              
+              <!-- Precio -->
+              <div>
+                <label class="block text-xs font-semibold tracking-[0.15em] text-gray-400 mb-2">
+                  PRECIO (Bs.)
+                </label>
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  class="w-full border-b-2 border-gray-200 focus:border-black outline-none py-2 text-sm transition-colors"
+                  placeholder="0.00"
+                  [(ngModel)]="formDraft().precio"
+                  name="precio"
+                />
+              </div>
+
+              
 
               <!-- Categoría -->
               <div>
@@ -495,73 +567,7 @@ import {
                 </div>
               </div>
 
-              <!-- Colores Disponibles -->
-              <div>
-                <label class="block text-xs font-semibold tracking-[0.15em] text-gray-400 mb-3">
-                  COLORES DISPONIBLES
-                </label>
-                <div class="flex gap-3 items-center flex-wrap">
-                  @for (color of opciones().colores; track color.id) {
-                    <div class="relative group">
-                      <button
-                        type="button"
-                        class="w-10 h-10 rounded-full border-4 transition-all relative"
-                        [style.background-color]="color.codigoHex"
-                        [class.border-black]="isColorSelected(color.id)"
-                        [class.border-transparent]="!isColorSelected(color.id)"
-                        (click)="toggleColor(color)"
-                        [title]="color.nombre + ' (' + color.codigoHex + ')'"
-                      >
-                        @if (isColorSelected(color.id)) {
-                          <svg
-                            class="absolute inset-0 m-auto w-5 h-5 text-white drop-shadow-md"
-                            fill="currentColor"
-                            viewBox="0 0 20 20"
-                          >
-                            <path
-                              fill-rule="evenodd"
-                              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                              clip-rule="evenodd"
-                            ></path>
-                          </svg>
-                        }
-                      </button>
-                      <button
-                        type="button"
-                        class="absolute -top-2 -right-2 bg-white rounded-full p-1 shadow-md opacity-0 group-hover:opacity-100 transition-opacity text-gray-500 hover:text-black z-10"
-                        (click)="$event.stopPropagation(); onEditColor(color.id)"
-                        title="Editar color"
-                      >
-                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-                          ></path>
-                        </svg>
-                      </button>
-                    </div>
-                  }
-
-                  <!-- Botón + para agregar color -->
-                  <button
-                    type="button"
-                    class="w-10 h-10 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-400 hover:border-black hover:text-black transition-all"
-                    (click)="onCreateColor()"
-                  >
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M12 4v16m8-8H4"
-                      ></path>
-                    </svg>
-                  </button>
-                </div>
-              </div>
-
+              
               <!-- Tallas Disponibles -->
               <div>
                 <label class="block text-xs font-semibold tracking-[0.15em] text-gray-400 mb-3">

@@ -21,10 +21,46 @@ import {
 export class CatalogoAdminService {
   private http = inject(HttpClient);
   private apiUrl = environment.apiUrl;
+  private readonly tallaOrdenLetras: Record<string, number> = {
+    S: 1,
+    M: 2,
+    L: 3,
+    XL: 4,
+    XXL: 5,
+  };
 
   private normalizeFotos(fotos?: Array<string | undefined>, fotoUrl?: string): string[] {
     const merged = fotos && fotos.length > 0 ? fotos : fotoUrl ? [fotoUrl] : [];
     return merged.map((url) => (url ?? '').trim()).filter((url) => url.length > 0);
+  }
+
+  private parseNumericTalla(nombre: string): number | null {
+    const cleaned = (nombre || '').trim().replace(',', '.');
+    if (!cleaned) return null;
+    return /^\d+(\.\d+)?$/.test(cleaned) ? Number(cleaned) : null;
+  }
+
+  private sortTallas(tallas: TallaDTO[]): TallaDTO[] {
+    return [...(tallas || [])].sort((a, b) => {
+      const aNombre = (a.nombre || '').trim();
+      const bNombre = (b.nombre || '').trim();
+
+      const aNum = this.parseNumericTalla(aNombre);
+      const bNum = this.parseNumericTalla(bNombre);
+
+      // 1) Numéricas de menor a mayor
+      if (aNum !== null && bNum !== null) return aNum - bNum;
+      if (aNum !== null) return -1;
+      if (bNum !== null) return 1;
+
+      // 2) Letras con orden de negocio
+      const aRank = this.tallaOrdenLetras[aNombre.toUpperCase()] ?? Number.MAX_SAFE_INTEGER;
+      const bRank = this.tallaOrdenLetras[bNombre.toUpperCase()] ?? Number.MAX_SAFE_INTEGER;
+      if (aRank !== bRank) return aRank - bRank;
+
+      // 3) Fallback alfabético para otros casos
+      return aNombre.localeCompare(bNombre, 'es', { sensitivity: 'base' });
+    });
   }
 
   /**
@@ -32,7 +68,14 @@ export class CatalogoAdminService {
    * Obtiene todas las opciones para los filtros (marcas, categorías, cortes, etc.)
    */
   getOpciones(): Observable<OpcionesCatalogoDTO> {
-    return this.http.get<OpcionesCatalogoDTO>(`${this.apiUrl}/catalogo/opciones`);
+    return this.http
+      .get<OpcionesCatalogoDTO>(`${this.apiUrl}/catalogo/opciones`)
+      .pipe(
+        map((opciones) => ({
+          ...opciones,
+          tallas: this.sortTallas(opciones.tallas || []),
+        })),
+      );
   }
 
   /**
