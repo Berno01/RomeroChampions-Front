@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, from } from 'rxjs';
-import { map, retry } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
+import { Observable, forkJoin } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 
 interface CloudinaryResponse {
@@ -47,7 +47,6 @@ export class CloudinaryService {
   uploadImage(file: File, folderName: string): Observable<string> {
     const formData = this.createFormData(file, folderName);
     return this.http.post<CloudinaryResponse>(this.getUploadUrl(), formData).pipe(
-      retry({ count: 2, delay: 250 }),
       map((data: CloudinaryResponse) => data.secure_url),
     );
   }
@@ -59,18 +58,11 @@ export class CloudinaryService {
    * @returns Observable con array de URLs
    */
   uploadMultipleImages(files: File[], folderName: string): Observable<string[]> {
-    const uploadPromises = files.map((file) =>
-      from(
+    return forkJoin(
+      files.map((file) =>
         this.http
           .post<CloudinaryResponse>(this.getUploadUrl(), this.createFormData(file, folderName))
-          .pipe(retry({ count: 2, delay: 250 }))
-          .toPromise(),
-      ),
-    );
-
-    return from(Promise.all(uploadPromises.map((obs) => obs.toPromise()))).pipe(
-      map((responses: Array<CloudinaryResponse | undefined>) =>
-        responses.filter((res): res is CloudinaryResponse => !!res).map((res) => res.secure_url),
+          .pipe(map((response) => response.secure_url)),
       ),
     );
   }
