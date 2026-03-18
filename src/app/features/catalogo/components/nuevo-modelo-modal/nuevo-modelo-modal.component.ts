@@ -1594,7 +1594,10 @@ export class NuevoModeloModalComponent {
       error: (err) => {
         this.saving.set(false);
         console.error('Error al subir imágenes a Cloudinary:', err);
-        this.toastService.error('Error al subir las imágenes', 4000);
+        const errorMessage =
+          (err && (err.message || err.error?.error?.message || err.error?.message)) ||
+          'Error al subir las imágenes';
+        this.toastService.error(errorMessage, 5000);
       },
     });
   }
