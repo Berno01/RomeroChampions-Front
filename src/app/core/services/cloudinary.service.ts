@@ -16,8 +16,8 @@ interface CloudinaryResponse {
   providedIn: 'root',
 })
 export class CloudinaryService {
-  private cloudName = environment.cloudinary.cloudName;
-  private uploadPreset = environment.cloudinary.uploadPreset;
+  private cloudName = (environment.cloudinary?.cloudName || '').trim();
+  private uploadPreset = (environment.cloudinary?.uploadPreset || '').trim();
   private uploadUrl = `https://api.cloudinary.com/v1_1/${this.cloudName}/image/upload`;
 
   /**
@@ -27,18 +27,21 @@ export class CloudinaryService {
    * @returns Observable con la URL segura de la imagen subida
    */
   uploadImage(file: File, folderName: string): Observable<string> {
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('upload_preset', this.uploadPreset);
-    formData.append('folder', folderName);
+    const formData = this.createFormData(file, folderName);
 
     return from(
       fetch(this.uploadUrl, {
         method: 'POST',
         body: formData,
-      }).then((response) => {
+      }).then(async (response) => {
         if (!response.ok) {
-          throw new Error(`Error al subir imagen: ${response.statusText}`);
+          const errorPayload = await response.json().catch(() => null);
+          const backendMessage = errorPayload?.error?.message;
+          throw new Error(
+            backendMessage
+              ? `Error al subir imagen: ${backendMessage}`
+              : `Error al subir imagen: ${response.status} ${response.statusText}`,
+          );
         }
         return response.json();
       })
@@ -56,9 +59,15 @@ export class CloudinaryService {
       fetch(this.uploadUrl, {
         method: 'POST',
         body: this.createFormData(file, folderName),
-      }).then((response) => {
+      }).then(async (response) => {
         if (!response.ok) {
-          throw new Error(`Error al subir imagen: ${response.statusText}`);
+          const errorPayload = await response.json().catch(() => null);
+          const backendMessage = errorPayload?.error?.message;
+          throw new Error(
+            backendMessage
+              ? `Error al subir imagen: ${backendMessage}`
+              : `Error al subir imagen: ${response.status} ${response.statusText}`,
+          );
         }
         return response.json();
       })
@@ -70,10 +79,24 @@ export class CloudinaryService {
   }
 
   private createFormData(file: File, folderName: string): FormData {
+    if (!this.cloudName) {
+      throw new Error('Cloudinary cloudName no está configurado en environment.');
+    }
+
+    if (!this.uploadPreset) {
+      throw new Error('Cloudinary uploadPreset no está configurado en environment.');
+    }
+
     const formData = new FormData();
     formData.append('file', file);
     formData.append('upload_preset', this.uploadPreset);
-    formData.append('folder', folderName);
+    formData.append('folder', (folderName || '').toString().trim() || 'general');
+
+    // Defensa adicional: si por alguna razón no quedó adjunto, evitamos request inválida.
+    if (!formData.has('upload_preset')) {
+      throw new Error('No se pudo adjuntar upload_preset en la solicitud a Cloudinary.');
+    }
+
     return formData;
   }
 }

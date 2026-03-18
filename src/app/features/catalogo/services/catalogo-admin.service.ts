@@ -68,14 +68,12 @@ export class CatalogoAdminService {
    * Obtiene todas las opciones para los filtros (marcas, categorías, cortes, etc.)
    */
   getOpciones(): Observable<OpcionesCatalogoDTO> {
-    return this.http
-      .get<OpcionesCatalogoDTO>(`${this.apiUrl}/catalogo/opciones`)
-      .pipe(
-        map((opciones) => ({
-          ...opciones,
-          tallas: this.sortTallas(opciones.tallas || []),
-        })),
-      );
+    return this.http.get<OpcionesCatalogoDTO>(`${this.apiUrl}/catalogo/opciones`).pipe(
+      map((opciones) => ({
+        ...opciones,
+        tallas: this.sortTallas(opciones.tallas || []),
+      })),
+    );
   }
 
   /**
