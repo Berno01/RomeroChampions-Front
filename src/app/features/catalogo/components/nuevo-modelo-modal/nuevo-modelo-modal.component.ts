@@ -311,8 +311,6 @@ import {
                 </div>
               </div>
 
-
-
               <!-- Nombre del Modelo -->
               <div>
                 <label class="block text-xs font-semibold tracking-[0.15em] text-gray-400 mb-2">
@@ -394,7 +392,6 @@ import {
                 </div>
               </div>
 
-
               <!-- Costo Actual -->
               <div>
                 <label class="block text-xs font-semibold tracking-[0.15em] text-gray-400 mb-2">
@@ -410,7 +407,7 @@ import {
                   name="costoActual"
                 />
               </div>
-              
+
               <!-- Precio -->
               <div>
                 <label class="block text-xs font-semibold tracking-[0.15em] text-gray-400 mb-2">
@@ -426,8 +423,6 @@ import {
                   name="precio"
                 />
               </div>
-
-              
 
               <!-- Categoría -->
               <div>
@@ -567,7 +562,6 @@ import {
                 </div>
               </div>
 
-              
               <!-- Tallas Disponibles -->
               <div>
                 <label class="block text-xs font-semibold tracking-[0.15em] text-gray-400 mb-3">

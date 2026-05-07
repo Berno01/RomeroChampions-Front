@@ -46,9 +46,9 @@ export class CloudinaryService {
    */
   uploadImage(file: File, folderName: string): Observable<string> {
     const formData = this.createFormData(file, folderName);
-    return this.http.post<CloudinaryResponse>(this.getUploadUrl(), formData).pipe(
-      map((data: CloudinaryResponse) => data.secure_url),
-    );
+    return this.http
+      .post<CloudinaryResponse>(this.getUploadUrl(), formData)
+      .pipe(map((data: CloudinaryResponse) => data.secure_url));
   }
 
   /**

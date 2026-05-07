@@ -83,28 +83,35 @@ export class CatalogoAdminService {
   getModelos(): Observable<ModeloDTO[]> {
     return this.http.get<ApiModeloDTO[]>(`${this.apiUrl}/catalogo/modelo`).pipe(
       map((modelos) =>
-        modelos.map((modelo) => ({
-          id: modelo.id,
-          nombre: modelo.nombre,
-          precio: modelo.precio || 0,
-          costoActual: modelo.costoActual ?? modelo.costo_actual ?? 0,
-          marca: modelo.marca,
-          categoria: modelo.categoria,
-          estilo: modelo.estilo,
-          genero: modelo.genero,
-          colores: modelo.colores.map((color) => ({
-            fotos: this.normalizeFotos(color.fotos, color.foto_url || color.fotoUrl),
-            id: color.id,
-            fotoUrl:
-              this.normalizeFotos(color.fotos, color.foto_url || color.fotoUrl)[0] ||
-              color.foto_url ||
-              color.fotoUrl ||
-              '',
-            color: color.color,
-            codigo: color.codigo,
-            variantes: color.variantes,
-          })),
-        })),
+        modelos.map((modelo) => {
+          const marca = modelo.marca ?? { id: 0, nombre: 'SIN MARCA' };
+          const categoria = modelo.categoria ?? { id: 0, nombre: 'SIN CATEGORIA' };
+          const estilo = modelo.estilo ?? { id: 0, nombre: 'SIN ESTILO' };
+          const colores = modelo.colores ?? [];
+
+          return {
+            id: modelo.id,
+            nombre: modelo.nombre,
+            precio: modelo.precio || 0,
+            costoActual: modelo.costoActual ?? modelo.costo_actual ?? 0,
+            marca,
+            categoria,
+            estilo,
+            genero: modelo.genero,
+            colores: colores.map((color) => ({
+              fotos: this.normalizeFotos(color.fotos, color.foto_url || color.fotoUrl),
+              id: color.id,
+              fotoUrl:
+                this.normalizeFotos(color.fotos, color.foto_url || color.fotoUrl)[0] ||
+                color.foto_url ||
+                color.fotoUrl ||
+                '',
+              color: color.color,
+              codigo: color.codigo,
+              variantes: color.variantes,
+            })),
+          };
+        }),
       ),
     );
   }
@@ -120,11 +127,11 @@ export class CatalogoAdminService {
         nombre: modelo.nombre,
         precio: modelo.precio || 0,
         costoActual: modelo.costoActual ?? modelo.costo_actual ?? 0,
-        marca: modelo.marca,
-        categoria: modelo.categoria,
-        estilo: modelo.estilo,
+        marca: modelo.marca ?? { id: 0, nombre: 'SIN MARCA' },
+        categoria: modelo.categoria ?? { id: 0, nombre: 'SIN CATEGORIA' },
+        estilo: modelo.estilo ?? { id: 0, nombre: 'SIN ESTILO' },
         genero: modelo.genero,
-        colores: modelo.colores.map((color: any) => ({
+        colores: (modelo.colores ?? []).map((color: any) => ({
           fotos: this.normalizeFotos(color.fotos, color.foto_url || color.fotoUrl),
           id: color.id,
           fotoUrl:
