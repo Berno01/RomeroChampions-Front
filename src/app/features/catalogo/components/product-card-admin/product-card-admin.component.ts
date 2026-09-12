@@ -1,4 +1,4 @@
-import { Component, input, output, ChangeDetectionStrategy, computed, signal } from '@angular/core';
+import { Component, input, output, ChangeDetectionStrategy, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ModeloDTO } from '../../models/catalogo-admin.models';
 
@@ -25,28 +25,6 @@ import { ModeloDTO } from '../../models/catalogo-admin.models';
             (error)="onImageError($event)"
             (load)="$event.target.classList.add('opacity-100')"
           />
-
-          @if (galleryPhotos().length > 1) {
-            <button
-              type="button"
-              class="absolute left-2 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-black w-7 h-7 flex items-center justify-center"
-              (click)="prevPhoto($event)"
-              title="Foto anterior"
-            >
-              <span class="text-lg leading-none">‹</span>
-            </button>
-            <button
-              type="button"
-              class="absolute right-2 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-black w-7 h-7 flex items-center justify-center"
-              (click)="nextPhoto($event)"
-              title="Foto siguiente"
-            >
-              <span class="text-lg leading-none">›</span>
-            </button>
-            <div class="absolute bottom-2 right-2 bg-black/70 text-white text-[10px] px-2 py-0.5">
-              {{ displayPhotoIndex() + 1 }}/{{ galleryPhotos().length }}
-            </div>
-          }
         } @else {
           <!-- Placeholder si no hay imagen -->
           <div
@@ -149,31 +127,9 @@ export class ProductCardAdminComponent {
   cardClick = output<number>();
   deleteClick = output<number>();
 
-  currentPhotoIndex = signal(0);
-
-  galleryPhotos = computed(() => {
-    const firstColor = this.modelo().colores?.[0];
-    const fotos = (firstColor?.fotos ?? []).filter((url) => !!url);
-    if (fotos.length > 0) {
-      return fotos;
-    }
-    return firstColor?.fotoUrl ? [firstColor.fotoUrl] : [];
-  });
-
   currentPhoto = computed(() => {
-    const photos = this.galleryPhotos();
-    if (photos.length === 0) {
-      return '';
-    }
-    return photos[this.displayPhotoIndex()];
-  });
-
-  displayPhotoIndex = computed(() => {
-    const photos = this.galleryPhotos();
-    if (photos.length === 0) {
-      return 0;
-    }
-    return Math.min(this.currentPhotoIndex(), photos.length - 1);
+    const firstColor = this.modelo().colores?.[0];
+    return firstColor?.fotoUrl || '';
   });
 
   onEdit(event: Event) {
@@ -196,19 +152,5 @@ export class ProductCardAdminComponent {
     } else {
       img.style.display = 'none';
     }
-  }
-
-  prevPhoto(event: Event) {
-    event.stopPropagation();
-    const total = this.galleryPhotos().length;
-    if (total <= 1) return;
-    this.currentPhotoIndex.update((index) => (index - 1 + total) % total);
-  }
-
-  nextPhoto(event: Event) {
-    event.stopPropagation();
-    const total = this.galleryPhotos().length;
-    if (total <= 1) return;
-    this.currentPhotoIndex.update((index) => (index + 1) % total);
   }
 }
