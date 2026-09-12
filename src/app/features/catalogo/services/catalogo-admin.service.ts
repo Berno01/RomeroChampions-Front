@@ -97,18 +97,17 @@ export class CatalogoAdminService {
             categoria,
             estilo,
             genero: modelo.genero,
-            colores: colores.map((color) => ({
-              fotos: this.normalizeFotos(color.fotos, color.foto_url || color.fotoUrl),
-              id: color.id,
-              fotoUrl:
-                this.normalizeFotos(color.fotos, color.foto_url || color.fotoUrl)[0] ||
-                color.foto_url ||
-                color.fotoUrl ||
-                '',
-              color: color.color,
-              codigo: color.codigo,
-              variantes: color.variantes,
-            })),
+            colores: colores.map((color) => {
+              const fotos = this.normalizeFotos(color.fotos, color.foto_url || color.fotoUrl);
+              return {
+                id: color.id,
+                fotos,
+                fotoUrl: fotos[0] || color.foto_url || color.fotoUrl || '',
+                color: color.color,
+                codigo: color.codigo,
+                variantes: color.variantes,
+              };
+            }),
           };
         }),
       ),

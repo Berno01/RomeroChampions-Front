@@ -319,10 +319,6 @@ export class CatalogoListComponent implements OnInit {
           searchableValues.push(colorModelo.color?.codigo_color || '');
         });
 
-        // Fallback robusto: busca también sobre el JSON completo de colores
-        // por si el backend cambia nombres de campo de código.
-        searchableValues.push(JSON.stringify(m.colores || []));
-
         return searchableValues.some((value) => normalize(value).includes(query));
       });
 
