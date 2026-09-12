@@ -93,7 +93,6 @@ export class CatalogoAdminService {
             id: modelo.id,
             nombre: modelo.nombre,
             precio: modelo.precio || 0,
-            costoActual: modelo.costoActual ?? modelo.costo_actual ?? 0,
             marca,
             categoria,
             estilo,

@@ -188,7 +188,14 @@ export class ProductCardAdminComponent {
 
   onImageError(event: Event) {
     const img = event.target as HTMLImageElement;
-    img.style.display = 'none';
+    const placeholder = '/assets/images/placeholder-product.svg';
+    if (img.getAttribute('data-error') !== '1') {
+      img.setAttribute('data-error', '1');
+      img.src = placeholder;
+      img.classList.add('opacity-100');
+    } else {
+      img.style.display = 'none';
+    }
   }
 
   prevPhoto(event: Event) {
